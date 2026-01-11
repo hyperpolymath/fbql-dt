@@ -120,3 +120,4 @@ See [spec/normalization-types.md](spec/normalization-types.md) for normalization
 - [BoFIG](https://github.com/hyperpolymath/bofig) - Evidence graph for investigative journalism
 - [Zotero-FormDB](https://github.com/hyperpolymath/zotero-formdb) - Production pilot: reference manager with PROMPT scores
 - [FormDB Debugger](https://github.com/hyperpolymath/formdb-debugger) - Proof-carrying database debugger (Lean 4 + Idris 2)
+- [FormBase](https://github.com/hyperpolymath/formbase) - Open-source Airtable alternative with provenance
