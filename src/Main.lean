@@ -6,8 +6,8 @@
 -- Interactive query interface for the FormDB Query Language.
 -- Demonstrates dependently-typed queries with provenance tracking.
 
-import FqlDt.Query
-import FqlDt.FFI
+import FbqlDt.Query
+import FbqlDt.FFI
 
 open FqlDt.Query
 open FqlDt.Query.Parser

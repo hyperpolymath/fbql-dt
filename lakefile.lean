@@ -18,9 +18,9 @@ require mathlib from git
 
 -- Main library
 @[default_target]
-lean_lib FqlDt where
+lean_lib FbqlDt where
   srcDir := "src"
-  roots := #[`FqlDt]
+  roots := #[`FbqlDt]
 
 -- FFI Test executable (requires Zig library to be built first)
 -- Build Zig lib: cd bridge && zig build

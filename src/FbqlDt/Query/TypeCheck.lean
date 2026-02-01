@@ -9,13 +9,13 @@
 -- - Expressions are well-typed
 -- - Proof requirements are met
 
-import FqlDt.Query.AST
-import FqlDt.Query.Schema
+import FbqlDt.Query.AST
+import FbqlDt.Query.Schema
 
-namespace FqlDt.Query.TypeCheck
+namespace FbqlDt.Query.TypeCheck
 
-open FqlDt.Query
-open FqlDt.Query.Schema
+open FbqlDt.Query
+open FbqlDt.Query.Schema
 
 -- ============================================================================
 -- Type Errors
@@ -306,4 +306,4 @@ def typeCheck (db : Database) (stmt : Statement) : Except String Table :=
 def typeCheckDetailed (db : Database) (stmt : Statement) : TypeResult Table :=
   checkStatement db stmt
 
-end FqlDt.Query.TypeCheck
+end FbqlDt.Query.TypeCheck

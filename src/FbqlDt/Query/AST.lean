@@ -6,10 +6,10 @@
 -- Defines the core AST types for the FormDB Query Language.
 -- FQL is designed for proof-carrying queries with provenance tracking.
 
-import FqlDt.Types.NonEmptyString
-import FqlDt.Prompt.PromptScores
+import FbqlDt.Types.NonEmptyString
+import FbqlDt.Prompt.PromptScores
 
-namespace FqlDt.Query
+namespace FbqlDt.Query
 
 -- ============================================================================
 -- Identifiers
@@ -233,4 +233,4 @@ def isMutation : Statement → Bool
 
 end Statement
 
-end FqlDt.Query
+end FbqlDt.Query

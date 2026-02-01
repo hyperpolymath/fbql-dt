@@ -8,7 +8,7 @@
 
 -- omega is built-in to Lean 4
 
-namespace FqlDt.Types
+namespace FbqlDt.Types
 
 /-- A string guaranteed to be non-empty.
 
@@ -74,4 +74,4 @@ def head (s : NonEmptyString) : Char :=
 
 end NonEmptyString
 
-end FqlDt.Types
+end FbqlDt.Types

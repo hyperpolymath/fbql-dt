@@ -6,15 +6,15 @@
 -- Provides a simple in-memory storage backend for query execution.
 -- Each value is tracked with provenance and PROMPT scores.
 
-import FqlDt.Query.Schema
-import FqlDt.Provenance.Tracked
-import FqlDt.Prompt.PromptScores
+import FbqlDt.Query.Schema
+import FbqlDt.Provenance.Tracked
+import FbqlDt.Prompt.PromptScores
 
-namespace FqlDt.Query.Store
+namespace FbqlDt.Query.Store
 
-open FqlDt.Query.Schema
-open FqlDt.Provenance
-open FqlDt.Prompt
+open FbqlDt.Query.Schema
+open FbqlDt.Provenance
+open FbqlDt.Prompt
 
 -- ============================================================================
 -- Value Types
@@ -243,4 +243,4 @@ structure MutationResult where
   lastInsertId : Option Nat
   deriving Repr
 
-end FqlDt.Query.Store
+end FbqlDt.Query.Store

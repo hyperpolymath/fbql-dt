@@ -3,7 +3,7 @@
 --
 -- FqlDt.Types - Core refinement types
 
-import FqlDt.Types.BoundedNat
-import FqlDt.Types.BoundedInt
-import FqlDt.Types.NonEmptyString
-import FqlDt.Types.Confidence
+import FbqlDt.Types.BoundedNat
+import FbqlDt.Types.BoundedInt
+import FbqlDt.Types.NonEmptyString
+import FbqlDt.Types.Confidence

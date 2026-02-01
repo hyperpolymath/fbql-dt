@@ -7,10 +7,10 @@
 -- who added it, when, and why. This is the core of FQLdt's
 -- type-enforced provenance tracking.
 
-import FqlDt.Provenance.ActorId
-import FqlDt.Provenance.Rationale
+import FbqlDt.Provenance.ActorId
+import FbqlDt.Provenance.Rationale
 
-namespace FqlDt.Provenance
+namespace FbqlDt.Provenance
 
 /-- A Unix timestamp (milliseconds since epoch) -/
 structure Timestamp where
@@ -128,4 +128,4 @@ def inTimeRange {α : Type} (ts : TrackedList α)
 
 end TrackedList
 
-end FqlDt.Provenance
+end FbqlDt.Provenance

@@ -5,7 +5,7 @@
 
 -- omega is built-in to Lean 4
 
-namespace FqlDt.Types
+namespace FbqlDt.Types
 
 /-- An integer bounded between min and max (inclusive).
 
@@ -46,4 +46,4 @@ theorem val_in_bounds {min max : Int} (b : BoundedInt min max) :
 
 end BoundedInt
 
-end FqlDt.Types
+end FbqlDt.Types

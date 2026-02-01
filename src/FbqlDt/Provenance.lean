@@ -3,6 +3,6 @@
 --
 -- FqlDt.Provenance - Provenance tracking types
 
-import FqlDt.Provenance.ActorId
-import FqlDt.Provenance.Rationale
-import FqlDt.Provenance.Tracked
+import FbqlDt.Provenance.ActorId
+import FbqlDt.Provenance.Rationale
+import FbqlDt.Provenance.Tracked

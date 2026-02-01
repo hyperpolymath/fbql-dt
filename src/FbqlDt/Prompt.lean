@@ -3,5 +3,5 @@
 --
 -- FqlDt.Prompt - PROMPT score types
 
-import FqlDt.Prompt.PromptDimension
-import FqlDt.Prompt.PromptScores
+import FbqlDt.Prompt.PromptDimension
+import FbqlDt.Prompt.PromptScores

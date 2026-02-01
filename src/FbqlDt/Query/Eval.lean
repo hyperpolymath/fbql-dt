@@ -6,17 +6,17 @@
 -- Executes type-checked queries against an in-memory store.
 -- Enforces proof requirements and tracks provenance.
 
-import FqlDt.Query.AST
-import FqlDt.Query.Schema
-import FqlDt.Query.Store
-import FqlDt.Query.TypeCheck
+import FbqlDt.Query.AST
+import FbqlDt.Query.Schema
+import FbqlDt.Query.Store
+import FbqlDt.Query.TypeCheck
 
-namespace FqlDt.Query.Eval
+namespace FbqlDt.Query.Eval
 
-open FqlDt.Query
-open FqlDt.Query.Schema
-open FqlDt.Query.Store
-open FqlDt.Query.TypeCheck
+open FbqlDt.Query
+open FbqlDt.Query.Schema
+open FbqlDt.Query.Store
+open FbqlDt.Query.TypeCheck
 
 -- ============================================================================
 -- Evaluation Errors
@@ -295,4 +295,4 @@ def execToString (db : DatabaseStore) (stmt : Statement)
       | none => s!"OK, {mr.affectedRows} row(s) affected"
   pure (newDb, msg)
 
-end FqlDt.Query.Eval
+end FbqlDt.Query.Eval

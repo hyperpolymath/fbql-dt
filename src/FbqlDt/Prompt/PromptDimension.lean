@@ -6,19 +6,19 @@
 -- Each PROMPT dimension (Provenance, Replicability, Objective,
 -- Methodology, Publication, Transparency) is scored 0-100.
 
-import FqlDt.Types.BoundedNat
+import FbqlDt.Types.BoundedNat
 
-namespace FqlDt.Prompt
+namespace FbqlDt.Prompt
 
 /-- A PROMPT dimension score, bounded 0-100.
 
 This is the fundamental unit for PROMPT scoring in FQLdt.
 Each of the six dimensions uses this type. -/
-abbrev PromptDimension := FqlDt.Types.BoundedNat 0 100
+abbrev PromptDimension := FbqlDt.Types.BoundedNat 0 100
 
 namespace PromptDimension
 
-open FqlDt.Types.BoundedNat
+open FbqlDt.Types.BoundedNat
 
 /-- Create a PROMPT dimension score with automatic proof -/
 def mk (n : Nat) (h1 : 0 ≤ n := by omega) (h2 : n ≤ 100 := by omega)
@@ -54,4 +54,4 @@ def qualityRating (d : PromptDimension) : String :=
 
 end PromptDimension
 
-end FqlDt.Prompt
+end FbqlDt.Prompt

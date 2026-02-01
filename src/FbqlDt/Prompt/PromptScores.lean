@@ -13,12 +13,12 @@
 --
 -- The overall score is the average of all 6, computed with proof.
 
-import FqlDt.Prompt.PromptDimension
+import FbqlDt.Prompt.PromptDimension
 -- omega is built-in to Lean 4
 
-namespace FqlDt.Prompt
+namespace FbqlDt.Prompt
 
-open FqlDt.Types
+open FbqlDt.Types
 
 /-- Complete PROMPT scores with all 6 dimensions plus computed overall.
 
@@ -132,4 +132,4 @@ def weakestDimension (s : PromptScores) : String × Nat :=
 
 end PromptScores
 
-end FqlDt.Prompt
+end FbqlDt.Prompt

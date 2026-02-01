@@ -5,9 +5,9 @@
 --
 -- Re-exports all FQL Query modules: AST, Parser, Schema, TypeCheck, Store, Eval.
 
-import FqlDt.Query.AST
-import FqlDt.Query.Parser
-import FqlDt.Query.Schema
-import FqlDt.Query.TypeCheck
-import FqlDt.Query.Store
-import FqlDt.Query.Eval
+import FbqlDt.Query.AST
+import FbqlDt.Query.Parser
+import FbqlDt.Query.Schema
+import FbqlDt.Query.TypeCheck
+import FbqlDt.Query.Store
+import FbqlDt.Query.Eval

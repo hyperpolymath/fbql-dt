@@ -7,7 +7,7 @@
 -- For MVP, this uses runtime validation rather than proof-level
 -- guarantees, since Float proofs are complex in Lean 4.
 
-namespace FqlDt.Types
+namespace FbqlDt.Types
 
 /-- A confidence value between 0.0 and 1.0.
 
@@ -72,4 +72,4 @@ def isLow (c : Confidence) : Bool := c.val < 0.3
 
 end Confidence
 
-end FqlDt.Types
+end FbqlDt.Types

@@ -6,9 +6,9 @@
 -- Simple monadic parser for the FormDB Query Language.
 -- Supports SELECT, INSERT, UPDATE, DELETE with provenance metadata.
 
-import FqlDt.Query.AST
+import FbqlDt.Query.AST
 
-namespace FqlDt.Query.Parser
+namespace FbqlDt.Query.Parser
 
 -- ============================================================================
 -- Parser Monad
@@ -454,4 +454,4 @@ def parseSelect (input : String) : Except String SelectQuery :=
 def parseExpr (input : String) : Except String Expr :=
   Parser.run Parser.expr input
 
-end FqlDt.Query.Parser
+end FbqlDt.Query.Parser

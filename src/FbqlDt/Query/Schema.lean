@@ -5,10 +5,10 @@
 --
 -- Defines table schemas, column types, and constraints for FQL type checking.
 
-import FqlDt.Types.BoundedNat
-import FqlDt.Prompt.PromptScores
+import FbqlDt.Types.BoundedNat
+import FbqlDt.Prompt.PromptScores
 
-namespace FqlDt.Query.Schema
+namespace FbqlDt.Query.Schema
 
 -- ============================================================================
 -- Column Types
@@ -223,4 +223,4 @@ def exampleDb : Database := {
   tables := [usersTable, dataTable]
 }
 
-end FqlDt.Query.Schema
+end FbqlDt.Query.Schema

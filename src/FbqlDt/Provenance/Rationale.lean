@@ -3,11 +3,11 @@
 --
 -- FqlDt.Provenance.Rationale - Non-empty justification for operations
 
-import FqlDt.Types.NonEmptyString
+import FbqlDt.Types.NonEmptyString
 
-namespace FqlDt.Provenance
+namespace FbqlDt.Provenance
 
-open FqlDt.Types
+open FbqlDt.Types
 
 /-- A rationale explaining why an operation was performed.
 
@@ -46,4 +46,4 @@ def systemGenerated : Rationale := fromString "System generated"
 
 end Rationale
 
-end FqlDt.Provenance
+end FbqlDt.Provenance

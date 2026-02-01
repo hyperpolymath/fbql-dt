@@ -1,12 +1,12 @@
 ;; SPDX-License-Identifier: PMPL-1.0-or-later
 ;; SPDX-FileCopyrightText: 2025 hyperpolymath
 ;;
-;; ECOSYSTEM.scm - Project ecosystem positioning for fdql-dt
+;; ECOSYSTEM.scm - Project ecosystem positioning for fbql-dt
 ;; Media-Type: application/vnd.ecosystem+scm
 
 (ecosystem
   (version "1.0.0")
-  (name "fdql-dt")
+  (name "fbql-dt")
   (type "language-extension")
   (purpose "Add dependent types to FormDB Query Language for compile-time verification")
 

@@ -5,7 +5,7 @@
 --
 -- Exports the Zig FFI bridge bindings for FormDB operations.
 
-import FqlDt.FFI.Bridge
+import FbqlDt.FFI.Bridge
 
 namespace FqlDt.FFI
 

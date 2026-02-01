@@ -11,7 +11,7 @@
 
 -- omega is built-in to Lean 4
 
-namespace FqlDt.Types
+namespace FbqlDt.Types
 
 /-- A natural number bounded between min and max (inclusive).
 
@@ -113,4 +113,4 @@ def add {min1 max1 min2 max2 : Nat}
 
 end BoundedNat
 
-end FqlDt.Types
+end FbqlDt.Types

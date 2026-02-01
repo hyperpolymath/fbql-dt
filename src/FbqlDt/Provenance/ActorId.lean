@@ -3,11 +3,11 @@
 --
 -- FqlDt.Provenance.ActorId - Non-empty identifier for actors
 
-import FqlDt.Types.NonEmptyString
+import FbqlDt.Types.NonEmptyString
 
-namespace FqlDt.Provenance
+namespace FbqlDt.Provenance
 
-open FqlDt.Types
+open FbqlDt.Types
 
 /-- An actor identifier, guaranteed to be non-empty.
 
@@ -43,4 +43,4 @@ def anonymousActor : ActorId := fromString "anonymous"
 
 end ActorId
 
-end FqlDt.Provenance
+end FbqlDt.Provenance
