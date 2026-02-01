@@ -170,19 +170,32 @@
         (implementation-files
           "src/FbqlDt/Lexer.lean - Hand-rolled lexer (540+ lines, no Parsec dependency)"
           "src/FbqlDt/Parser.lean - Parser combinators with error handling"
-          "src/FbqlDt/AST.lean - Type-safe AST with dependent types (1 compilation issue)"
+          "src/FbqlDt/AST.lean - Type-safe AST with dependent types (BUILDS SUCCESSFULLY)"
           "src/FbqlDt/TypeInference.lean - Inferred types before schema lookup"
           "src/FbqlDt/Pipeline.lean - Full compilation pipeline"))))
 
   (blockers-and-issues
     (critical
       (issue
+        (id "SER-001")
+        (title "Serialization.lean broken by AST refactoring")
+        (description "References to removed .tracked and .confidence constructors, missing API updates")
+        (solution "Update CBOR encoding/decoding to match new AST structure (TrackedValue wrapper, no .confidence)")
+        (status "active"))
+      (issue
+        (id "TS-001")
+        (title "TypeSafe.lean broken by AST refactoring")
+        (description "Missing imports, references to removed Evidence type, keyword conflicts with 'from'")
+        (solution "Fix imports, update to new AST API, rename 'from' → 'from_' to avoid keywords")
+        (status "active")))
+    (high
+      (issue
         (id "AST-001")
         (title "AST.lean nested inductive type error")
-        (description "TypedValue uses Tracked in nested inductive, Lean kernel rejects local variables in nested parameters")
-        (solution "Restructure to avoid nesting or use alternative encoding (e.g., type class)")
-        (status "active")))
-    (high ())  ; DECISION-001 resolved: Lean 4 v4.15.0 chosen, DECISION-002 resolved: Hand-rolled parser chosen
+        (description "TypedValue used Tracked in nested inductive, Lean kernel rejected local variables in nested parameters")
+        (solution "RESOLVED: Separated provenance tracking into TrackedValue wrapper, removed .tracked from TypeExpr")
+        (status "resolved")
+        (resolved-date "2026-02-01")))  ; DECISION-001 resolved: Lean 4 v4.15.0 chosen, DECISION-002 resolved: Hand-rolled parser chosen
     (medium ())
     (low
       (issue
@@ -483,7 +496,66 @@
         "Lexer rewrite decision: hand-rolled is simpler, no external dependencies"
         "Partial functions acceptable for development (termination proofs deferred)"
         "CBOR tag vendor range (55799-55899) safe for FBQLdt-specific tags"
-        "Next phase: Fix AST.lean, then complete schema registry integration")))))
+        "Next phase: Fix AST.lean, then complete schema registry integration"))
+    (snapshot
+      (date "2026-02-01")
+      (session-id "ast-lean-complete-fix")
+      (accomplishments
+        "AST.lean FIXED: Module now builds successfully (24/35 → FbqlDt.AST ✓)"
+        "CRITICAL BLOCKER RESOLVED: AST-001 nested inductive type error fixed"
+        "Removed .tracked variant from TypeExpr (no longer a type constructor)"
+        "Created TrackedValue wrapper structure (separates provenance from type system)"
+        "TrackedValue fields: value : TypedValue t, timestamp : Nat, actorId : ActorId, rationale : Rationale"
+        "Added manual Repr instance for TrackedValue (can't auto-derive with dependent types)"
+        "Simplified TypedValue: nat, int, string, bool, float, boundedNat, nonEmptyString, promptScores"
+        "No nested inductive - provenance tracking via wrapper, not type constructor"
+        "Fixed keyword conflict: Renamed 'from' → 'from_' in SelectStmt structure"
+        "Added manual Repr instances: Constraint (with pattern matches), Condition (partial def for recursion)"
+        "Added manual Repr instance for TypedValue to support sigma types"
+        "Added manual Repr instance for sigma type (Σ t : TypeExpr, TypedValue t)"
+        "Added Inhabited instance for sigma type (default: ⟨.nat, .nat 0⟩)"
+        "Fixed redundant pattern match alternatives in satisfiesConstraints"
+        "Changed from nested match to simultaneous match on (t, v)"
+        "Updated Row and TrackedRow definitions to use sigma types"
+        "Updated InsertStmt, UpdateStmt, Assignment to use sigma types"
+        "All Repr synthesis errors resolved"
+        "Created comprehensive Trustfile: contractiles/trust/Trustfile"
+        "Trustfile defines cryptographic standards for entire FormDB ecosystem"
+        "Mandatory algorithms: Argon2id (512 MiB, 8 iterations, parallelism 4)"
+        "General hashing: SHAKE3-512 (512 bits, FIPS 202, post-quantum)"
+        "PQ signatures: Dilithium5-AES hybrid (ML-DSA-87 FIPS 204)"
+        "PQ key exchange: Kyber-1024 (ML-KEM-1024 FIPS 203) + SHAKE256-KDF"
+        "Symmetric encryption: XChaCha20-Poly1305 (256-bit keys)"
+        "Danger zone: Immediate termination list (SHA-1, MD5, Ed25519, RSA-2048, PBKDF2, etc.)"
+        "Protocol termination: HTTP/1.1, HTTP/2, IPv4, FTP, Telnet, SSL, TLS 1.0/1.1"
+        "NIST FIPS compliance: FIPS 202, FIPS 203, FIPS 204, SP 800-90Ar1"
+        "Formal verification: Coq, Isabelle, Lean 4 for all crypto primitives"
+        "Accessibility: WCAG 2.3 AAA mandatory, semantic XML + ARIA"
+        "VM: GraalVM for introspective, reversible design")
+      (remaining-issues
+        "Serialization.lean broken by AST refactoring (SER-001)"
+        "References to removed .tracked and .confidence constructors"
+        "Missing API updates: BoundedNat.mk, NonEmptyString.mk, String.fromUTF8Unchecked"
+        "TypeSafe.lean broken by AST refactoring (TS-001)"
+        "Missing imports, references to removed Evidence type, keyword conflicts")
+      (build-status
+        "24 modules build successfully (including FbqlDt.AST)"
+        "2 modules failing: FbqlDt.TypeSafe, FbqlDt.Serialization"
+        "9 dependent modules not building due to failures")
+      (next-steps
+        "Fix Serialization.lean: Update to new AST structure"
+        "Update CBOR encoding/decoding to use TrackedValue wrapper"
+        "Fix constructor references: BoundedNat, NonEmptyString constructors"
+        "Fix TypeSafe.lean: Add missing imports, remove Evidence references"
+        "Rename 'from' → 'from_' for keyword conflicts"
+        "After fixes: Achieve 35/35 modules building (100% build success)"
+        "Start M7 (Idris2 ABI) + M8 (Zig FFI) in parallel")
+      (notes
+        "AST.lean was the last major architectural blocker"
+        "Provenance tracking separation preserves type safety while avoiding nested inductives"
+        "Trustfile establishes security foundation for entire ecosystem"
+        "Post-quantum cryptography mandatory per FormDB philosophy"
+        "Serialization/TypeSafe fixes are straightforward API updates"))
 
 ;; Helper functions for state queries
 (define (get-completion-percentage state)
