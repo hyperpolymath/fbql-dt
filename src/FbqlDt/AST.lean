@@ -131,6 +131,10 @@ structure TypeRefinement (α : Type) where
   predicate : α → Prop
   proof : ∀ x : α, Decidable (predicate x)
 
+-- Manual Repr for TypeRefinement (contains Prop/proof fields)
+instance {α : Type} : Repr (TypeRefinement α) where
+  reprPrec _ _ := "TypeRefinement { ... }"
+
 -- SELECT components (defined before SelectStmt uses them)
 inductive SelectList where
   | star : SelectList
@@ -155,14 +159,37 @@ inductive Condition where
   | or : Condition → Condition → Condition
   | not : Condition → Condition
 
--- Manual Repr for Condition (complex structure)
+-- Manual Repr for Condition (simplified to avoid recursion issues)
+partial def reprCondition : Condition → String
+  | .eq _ _ => "Condition.eq"
+  | .lt _ _ => "Condition.lt"
+  | .and c1 c2 => "Condition.and (" ++ reprCondition c1 ++ ") (" ++ reprCondition c2 ++ ")"
+  | .or c1 c2 => "Condition.or (" ++ reprCondition c1 ++ ") (" ++ reprCondition c2 ++ ")"
+  | .not c => "Condition.not (" ++ reprCondition c ++ ")"
+
 instance : Repr Condition where
+  reprPrec c _ := reprCondition c
+
+-- Manual Repr for sigma types (needed for Assignment and InsertStmt)
+instance {t : TypeExpr} : Repr (TypedValue t) where
   reprPrec
-    | .eq _ _, _ => "Condition.eq"
-    | .lt _ _, _ => "Condition.lt"
-    | .and c1 c2, _ => "Condition.and (" ++ repr c1 ++ ") (" ++ repr c2 ++ ")"
-    | .or c1 c2, _ => "Condition.or (" ++ repr c1 ++ ") (" ++ repr c2 ++ ")"
-    | .not c, _ => "Condition.not (" ++ repr c ++ ")"
+    | .nat n, _ => "TypedValue.nat " ++ repr n
+    | .int i, _ => "TypedValue.int " ++ repr i
+    | .string s, _ => "TypedValue.string " ++ repr s
+    | .bool b, _ => "TypedValue.bool " ++ repr b
+    | .float f, _ => "TypedValue.float " ++ repr f
+    | .boundedNat _ _ _, _ => "TypedValue.boundedNat"
+    | .nonEmptyString _, _ => "TypedValue.nonEmptyString"
+    | .promptScores _, _ => "TypedValue.promptScores"
+
+-- Repr for the sigma type itself
+instance : Repr (Σ t : TypeExpr, TypedValue t) where
+  reprPrec sigma _ := match sigma with
+    | ⟨t, _⟩ => "(Σ " ++ repr t ++ ", value)"
+
+-- Inhabited for the sigma type (default: nat with value 0)
+instance : Inhabited (Σ t : TypeExpr, TypedValue t) where
+  default := ⟨.nat, .nat 0⟩
 
 -- Assignment for UPDATE statements
 structure Assignment where
@@ -246,15 +273,9 @@ structure InsertProofObligation {schema : Schema} (stmt : InsertStmt schema) whe
 
 -- Helper: check if value satisfies type constraints
 def satisfiesConstraints {t : TypeExpr} (v : TypedValue t) : Prop :=
-  match t with
-  | .boundedNat min max =>
-      match v with
-      | .boundedNat _ _ bn => bn.val ≥ min ∧ bn.val ≤ max
-      | _ => False
-  | .nonEmptyString =>
-      match v with
-      | .nonEmptyString nes => nes.val.length > 0
-      | _ => False
-  | _ => True  -- Other types checked structurally
+  match t, v with
+  | .boundedNat min max, .boundedNat _ _ bn => bn.val ≥ min ∧ bn.val ≤ max
+  | .nonEmptyString, .nonEmptyString nes => nes.val.length > 0
+  | _, _ => True  -- Other types checked structurally
 
 end FbqlDt.AST
