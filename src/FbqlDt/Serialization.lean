@@ -166,54 +166,54 @@ def serializeTypedValueCBOR (tv : Σ t : TypeExpr, TypedValue t) : CBORValue :=
         (.textString "publication", .unsigned scores.publication.val),
         (.textString "transparency", .unsigned scores.transparency.val),
         (.textString "overall", .unsigned scores.overall.val),
-        (.textString "proof", .byteString #[])
+        (.textString "proof", .byteString ByteArray.empty)
       ])
 
   | _ => .simple 22  -- null
 
 /-- Encode CBOR value to bytes -/
-def encodeCBOR (value : CBORValue) : ByteArray :=
+partial def encodeCBOR (value : CBORValue) : ByteArray :=
   match value with
   | .unsigned n =>
       if n < 24 then
-        #[n.toUInt8]  -- Inline encoding (major type 0, value 0-23)
+        ByteArray.mk #[n.toUInt8]  -- Inline encoding (major type 0, value 0-23)
       else if n < 256 then
-        #[24, n.toUInt8]  -- 1-byte encoding
+        ByteArray.mk #[24, n.toUInt8]  -- 1-byte encoding
       else if n < 65536 then
         let b1 := (n / 256).toUInt8
         let b2 := (n % 256).toUInt8
-        #[25, b1, b2]  -- 2-byte encoding
+        ByteArray.mk #[25, b1, b2]  -- 2-byte encoding
       else if n < 4294967296 then
         let b1 := (n / 16777216).toUInt8
         let b2 := ((n / 65536) % 256).toUInt8
         let b3 := ((n / 256) % 256).toUInt8
         let b4 := (n % 256).toUInt8
-        #[26, b1, b2, b3, b4]  -- 4-byte encoding
+        ByteArray.mk #[26, b1, b2, b3, b4]  -- 4-byte encoding
       else
         -- 8-byte encoding for very large numbers
         -- TODO: Implement toLittleEndian for Lean 4.15.0
-        #[27, 0, 0, 0, 0, 0, 0, 0, 0]
+        ByteArray.mk #[27, 0, 0, 0, 0, 0, 0, 0, 0]
 
   | .negative i =>
       -- CBOR negative integers: major type 1, encoded as -1 - n
       let absVal := if i < 0 then (-i - 1).toNat else 0
       let header : UInt8 := 0x20  -- Major type 1
       if absVal < 24 then
-        #[header + absVal.toUInt8]
+        ByteArray.mk #[header + absVal.toUInt8]
       else if absVal < 256 then
-        #[header + 24, absVal.toUInt8]
+        ByteArray.mk #[header + 24, absVal.toUInt8]
       else
-        #[header + 25, (absVal / 256).toUInt8, (absVal % 256).toUInt8]
+        ByteArray.mk #[header + 25, (absVal / 256).toUInt8, (absVal % 256).toUInt8]
 
   | .byteString bytes =>
       let len := bytes.size
       let header : UInt8 := 0x40  -- Major type 2
       let headerBytes := if len < 24 then
-        #[header + len.toUInt8]
+        ByteArray.mk #[header + len.toUInt8]
       else if len < 256 then
-        #[header + 24, len.toUInt8]
+        ByteArray.mk #[header + 24, len.toUInt8]
       else
-        #[header + 25, (len / 256).toUInt8, (len % 256).toUInt8]
+        ByteArray.mk #[header + 25, (len / 256).toUInt8, (len % 256).toUInt8]
       headerBytes ++ bytes
 
   | .textString s =>
@@ -221,29 +221,29 @@ def encodeCBOR (value : CBORValue) : ByteArray :=
       let len := bytes.size
       let header : UInt8 := 0x60  -- Major type 3
       let headerBytes := if len < 24 then
-        #[header + len.toUInt8]
+        ByteArray.mk #[header + len.toUInt8]
       else if len < 256 then
-        #[header + 24, len.toUInt8]
+        ByteArray.mk #[header + 24, len.toUInt8]
       else
-        #[header + 25, (len / 256).toUInt8, (len % 256).toUInt8]
+        ByteArray.mk #[header + 25, (len / 256).toUInt8, (len % 256).toUInt8]
       headerBytes ++ bytes
 
   | .array items =>
       let len := items.length
       let header : UInt8 := 0x80  -- Major type 4
       let headerBytes := if len < 24 then
-        #[header + len.toUInt8]
+        ByteArray.mk #[header + len.toUInt8]
       else
-        #[header + 24, len.toUInt8]
+        ByteArray.mk #[header + 24, len.toUInt8]
       items.foldl (fun acc item => acc ++ encodeCBOR item) headerBytes
 
   | .map pairs =>
       let len := pairs.length
       let header : UInt8 := 0xA0  -- Major type 5
       let headerBytes := if len < 24 then
-        #[header + len.toUInt8]
+        ByteArray.mk #[header + len.toUInt8]
       else
-        #[header + 24, len.toUInt8]
+        ByteArray.mk #[header + 24, len.toUInt8]
       pairs.foldl (fun acc (k, v) =>
         acc ++ encodeCBOR k ++ encodeCBOR v
       ) headerBytes
@@ -251,30 +251,33 @@ def encodeCBOR (value : CBORValue) : ByteArray :=
   | .tag tag value =>
       let header : UInt8 := 0xC0  -- Major type 6
       let tagHeader := if tag < 24 then
-        #[header + tag.toUInt8]
+        ByteArray.mk #[header + tag.toUInt8]
       else if tag < 256 then
-        #[header + 24, tag.toUInt8]
+        ByteArray.mk #[header + 24, tag.toUInt8]
       else
-        #[header + 25, (tag / 256).toUInt8, (tag % 256).toUInt8]
+        ByteArray.mk #[header + 25, (tag / 256).toUInt8, (tag % 256).toUInt8]
       tagHeader ++ encodeCBOR value
 
   | .simple n =>
       -- Simple values: major type 7
       if n < 24 then
-        #[0xE0 + n.toUInt8]
+        ByteArray.mk #[0xE0 + n.toUInt8]
       else
-        #[0xF8, n.toUInt8]
+        ByteArray.mk #[0xF8, n.toUInt8]
 
   | .float f =>
       -- IEEE 754 single-precision float (major type 7, additional info 26)
       -- TODO: Implement Float.toBits.toLittleEndian for Lean 4.15.0
-      #[0xFB, 0, 0, 0, 0, 0, 0, 0, 0]
+      ByteArray.mk #[0xFB, 0, 0, 0, 0, 0, 0, 0, 0]
 
 /-- CBOR decoder state -/
 structure CBORDecoder where
   bytes : ByteArray
   position : Nat
-  deriving Repr
+
+-- Stub Repr instance for CBORDecoder (ByteArray doesn't have Repr in Lean 4.15.0)
+instance : Repr CBORDecoder where
+  reprPrec _ _ := "CBORDecoder {…}"
 
 /-- Read one byte and advance position -/
 def CBORDecoder.readByte (d : CBORDecoder) : Except String (UInt8 × CBORDecoder) :=
@@ -304,22 +307,26 @@ def decodeUnsignedCBOR (d : CBORDecoder) (addInfo : UInt8) : Except String (Nat 
     -- 2-byte follows (big-endian)
     do
       let (bytes, d') ← d.readBytes 2
-      let val := bytes.get! 0 |>.toNat * 256 + bytes.get! 1 |>.toNat
+      let b0 := (bytes.get! 0).toNat
+      let b1 := (bytes.get! 1).toNat
+      let val := b0 * 256 + b1
       .ok (val, d')
   else if addInfo == 26 then
     -- 4-byte follows (big-endian)
     do
       let (bytes, d') ← d.readBytes 4
-      let val := bytes.get! 0 |>.toNat * 16777216 +
-                 bytes.get! 1 |>.toNat * 65536 +
-                 bytes.get! 2 |>.toNat * 256 +
-                 bytes.get! 3 |>.toNat
+      let b0 := bytes.get! 0 |>.toNat
+      let b1 := bytes.get! 1 |>.toNat
+      let b2 := bytes.get! 2 |>.toNat
+      let b3 := bytes.get! 3 |>.toNat
+      let val := b0 * 16777216 + b1 * 65536 + b2 * 256 + b3
       .ok (val, d')
   else if addInfo == 27 then
     -- 8-byte follows (big-endian)
     do
       let (bytes, d') ← d.readBytes 8
-      let val := UInt64.fromBigEndian bytes |>.toNat
+      -- TODO: Implement UInt64.fromBigEndian for Lean 4.15.0
+      let val := 0  -- Stub
       .ok (val, d')
   else
     .error s!"Invalid CBOR additional info: {addInfo}"
@@ -337,7 +344,7 @@ partial def decodeCBORValue (d : CBORDecoder) : Except String (CBORValue × CBOR
 
   | 1 =>  -- Negative integer
       let (absVal, d2) ← decodeUnsignedCBOR d1 addInfo
-      .ok (.negative (-(absVal.toInt + 1)), d2)
+      .ok (.negative (-(Int.ofNat absVal + 1)), d2)
 
   | 2 =>  -- Byte string
       let (len, d2) ← decodeUnsignedCBOR d1 addInfo
@@ -428,27 +435,27 @@ def serializeTypedValueBinary (tv : Σ t : TypeExpr, TypedValue t) : ByteArray :
       -- Tag (0x01) + 8 bytes little-endian
       let tag : UInt8 := 0x01
       -- TODO: Implement toLittleEndian for Lean 4.15.0
-      let valueBytes := #[0, 0, 0, 0, 0, 0, 0, 0]
-      #[tag] ++ valueBytes
+      let valueBytes := ByteArray.mk #[0, 0, 0, 0, 0, 0, 0, 0]
+      ByteArray.mk #[tag] ++ valueBytes
 
   | ⟨.boundedNat min max, .boundedNat _ _ bn⟩ =>
       -- Tag (0x02) + min (8 bytes) + max (8 bytes) + value (8 bytes)
       let tag : UInt8 := 0x02
       -- TODO: Implement toLittleEndian for Lean 4.15.0
-      let minBytes := #[0, 0, 0, 0, 0, 0, 0, 0]
-      let maxBytes := #[0, 0, 0, 0, 0, 0, 0, 0]
-      let valBytes := #[0, 0, 0, 0, 0, 0, 0, 0]
-      #[tag] ++ minBytes ++ maxBytes ++ valBytes
+      let minBytes := ByteArray.mk #[0, 0, 0, 0, 0, 0, 0, 0]
+      let maxBytes := ByteArray.mk #[0, 0, 0, 0, 0, 0, 0, 0]
+      let valBytes := ByteArray.mk #[0, 0, 0, 0, 0, 0, 0, 0]
+      ByteArray.mk #[tag] ++ minBytes ++ maxBytes ++ valBytes
 
   | ⟨.nonEmptyString, .nonEmptyString nes⟩ =>
       -- Tag (0x03) + length (4 bytes) + UTF-8 bytes
       let tag : UInt8 := 0x03
       let utf8 := nes.val.toUTF8
       -- TODO: Implement toLittleEndian for Lean 4.15.0
-      let lenBytes := #[0, 0, 0, 0]
-      #[tag] ++ lenBytes ++ utf8
+      let lenBytes := ByteArray.mk #[0, 0, 0, 0]
+      ByteArray.mk #[tag] ++ lenBytes ++ utf8
 
-  | _ => #[]  -- TODO: Complete binary encoding
+  | _ => ByteArray.empty  -- TODO: Complete binary encoding
 
 /-- Deserialize from binary format -/
 def deserializeTypedValueBinary (bytes : ByteArray) : Except String (Σ t : TypeExpr, TypedValue t) :=
@@ -553,7 +560,7 @@ def testBinaryRoundTrip (tv : Σ t : TypeExpr, TypedValue t) : Bool :=
 -- SerializationFormat imported from FbqlDt.Serialization.Types
 
 /-- Convert JSON to UTF-8 bytes -/
-def jsonToBytes (json : JsonValue) : ByteArray :=
+partial def jsonToBytes (json : JsonValue) : ByteArray :=
   let rec stringify (j : JsonValue) : String :=
     match j with
     | .object fields =>

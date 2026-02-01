@@ -55,6 +55,25 @@ inductive TypeExpr where
   -- Note: Provenance tracking via TrackedValue wrapper, not a type constructor
   deriving Repr
 
+-- ToString instance for TypeExpr
+def typeExprToString : TypeExpr → String
+  | .nat => "Nat"
+  | .int => "Int"
+  | .string => "String"
+  | .bool => "Bool"
+  | .float => "Float"
+  | .uuid => "UUID"
+  | .timestamp => "Timestamp"
+  | .boundedNat min max => s!"BoundedNat {min} {max}"
+  | .boundedFloat min max => s!"BoundedFloat {min} {max}"
+  | .nonEmptyString => "NonEmptyString"
+  | .confidence => "Confidence"
+  | .vector t n => s!"Vector ({typeExprToString t}) {n}"
+  | .promptScores => "PromptScores"
+
+instance : ToString TypeExpr where
+  toString := typeExprToString
+
 -- Normal form levels
 -- NO DEPENDENCIES
 inductive NormalForm where

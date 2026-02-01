@@ -78,6 +78,27 @@ partial def reprCBOR : CBORValue → Nat → Std.Format
 instance : Repr CBORValue where
   reprPrec v _ := reprCBOR v 0
 
+-- BEq instance for CBORValue
+partial def cborValueBeq : CBORValue → CBORValue → Bool
+  | .unsigned n1, .unsigned n2 => n1 == n2
+  | .negative i1, .negative i2 => i1 == i2
+  | .byteString bs1, .byteString bs2 => bs1.data == bs2.data  -- Compare underlying arrays
+  | .textString s1, .textString s2 => s1 == s2
+  | .array items1, .array items2 =>
+      items1.length == items2.length &&
+      (items1.zip items2).all (fun (a, b) => cborValueBeq a b)
+  | .map pairs1, .map pairs2 =>
+      pairs1.length == pairs2.length &&
+      (pairs1.zip pairs2).all (fun ((k1, v1), (k2, v2)) =>
+        cborValueBeq k1 k2 && cborValueBeq v1 v2)
+  | .tag t1 v1, .tag t2 v2 => t1 == t2 && cborValueBeq v1 v2
+  | .simple n1, .simple n2 => n1 == n2
+  | .float f1, .float f2 => f1 == f2
+  | _, _ => false
+
+instance : BEq CBORValue where
+  beq := cborValueBeq
+
 -- ============================================================================
 -- CBOR Semantic Tags for FBQLdt
 -- ============================================================================
