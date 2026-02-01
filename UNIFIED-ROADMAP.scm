@@ -28,7 +28,7 @@
         (tech "Forth + Factor + Zig"))
       (fdql-dt
         (version "0.2.0")
-        (completion 65)
+        (completion 85)
         (role "Dependently-typed query language")
         (tech "Lean 4 + Zig"))
       (formdb-studio
