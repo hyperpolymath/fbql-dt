@@ -83,6 +83,48 @@ inductive TokenType where
   | eof
   deriving Repr, BEq
 
+-- ToString instance for TokenType
+instance : ToString TokenType where
+  toString
+    | .kwSelect => "SELECT"
+    | .kwInsert => "INSERT"
+    | .kwUpdate => "UPDATE"
+    | .kwDelete => "DELETE"
+    | .kwFrom => "FROM"
+    | .kwWhere => "WHERE"
+    | .kwInto => "INTO"
+    | .kwValues => "VALUES"
+    | .kwSet => "SET"
+    | .kwRationale => "RATIONALE"
+    | .kwNat => "Nat"
+    | .kwInt => "Int"
+    | .kwString => "String"
+    | .kwBool => "Bool"
+    | .kwNonEmptyString => "NonEmptyString"
+    | .kwBoundedNat => "BoundedNat"
+    | .kwConfidence => "Confidence"
+    | .kwPromptScores => "PromptScores"
+    | .litNat n => s!"<Nat:{n}>"
+    | .litInt i => s!"<Int:{i}>"
+    | .litFloat f => s!"<Float:{f}>"
+    | .litString s => s!"<String:\"{s}\">"
+    | .litBool b => s!"<Bool:{b}>"
+    | .identifier name => s!"<id:{name}>"
+    | .opEq => "="
+    | .opLt => "<"
+    | .opGt => ">"
+    | .opLe => "<="
+    | .opGe => ">="
+    | .opNeq => "!="
+    | .opDoubleColon => "::"
+    | .leftParen => "("
+    | .rightParen => ")"
+    | .comma => ","
+    | .semicolon => ";"
+    | .opStar => "*"
+    | .eof => "EOF"
+    | _ => "<token>"
+
 /-- Token with location information -/
 structure Token where
   type : TokenType

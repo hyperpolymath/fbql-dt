@@ -13,7 +13,10 @@ import FbqlDt.Serialization
 
 namespace FbqlDt.Pipeline
 
-open Lexer Parser TypeChecker TypeInference IR Serialization
+-- Mark entire namespace as noncomputable due to axiomatized parser functions
+noncomputable section
+
+open Lexer Parser TypeChecker TypeInference IR Serialization AST
 
 /-!
 # FBQLdt/FBQL Complete Parsing Pipeline
@@ -101,7 +104,7 @@ def tokenizeSource (source : String) : Except String (List Token) :=
   tokenize source
 
 /-- Stage 2: Parse tokens to AST -/
-def parseTokens (tokens : List Token) (config : PipelineConfig) : Except String (List Statement) := do
+noncomputable def parseTokens (tokens : List Token) (config : PipelineConfig) : Except String (List Statement) := do
   let initialState : ParserState := {
     tokens := tokens,
     position := 0
@@ -144,7 +147,7 @@ def validateIRPermissions (ir : IR) (config : PipelineConfig) : Except String Un
   validatePermissions ir
 
 /-- Stage 6: Serialize IR -/
-def serializeIRToBytes (ir : IR) (config : PipelineConfig) : ByteArray :=
+noncomputable def serializeIRToBytes (ir : IR) (config : PipelineConfig) : ByteArray :=
   serializeIR ir  -- TODO: Use config.serializationFormat
 
 -- ============================================================================
@@ -152,7 +155,7 @@ def serializeIRToBytes (ir : IR) (config : PipelineConfig) : ByteArray :=
 -- ============================================================================
 
 /-- Run complete pipeline: Source → IR -/
-def runPipeline (source : String) (config : PipelineConfig) : Except String IR := do
+noncomputable def runPipeline (source : String) (config : PipelineConfig) : Except String IR := do
   -- Stage 1: Tokenize
   let tokens ← tokenizeSource source
 
@@ -177,7 +180,7 @@ def runPipeline (source : String) (config : PipelineConfig) : Except String IR :
   .ok ir
 
 /-- Run pipeline and serialize to bytes -/
-def runPipelineAndSerialize (source : String) (config : PipelineConfig) : Except String ByteArray := do
+noncomputable def runPipelineAndSerialize (source : String) (config : PipelineConfig) : Except String ByteArray := do
   let ir ← runPipeline source config
   .ok (serializeIRToBytes ir config)
 
@@ -186,11 +189,11 @@ def runPipelineAndSerialize (source : String) (config : PipelineConfig) : Except
 -- ============================================================================
 
 /-- Parse FBQL query (user tier) -/
-def parseFBQL (source : String) (userId roleId : String) : Except String IR :=
+noncomputable def parseFBQL (source : String) (userId roleId : String) : Except String IR :=
   runPipeline source (defaultFBQLConfig userId roleId)
 
 /-- Parse FBQLdt query (admin tier) -/
-def parseFBQLdt (source : String) (userId roleId : String) : Except String IR :=
+noncomputable def parseFBQLdt (source : String) (userId roleId : String) : Except String IR :=
   runPipeline source (defaultFBQLdtConfig userId roleId)
 
 /-- Parse and execute query -/
@@ -231,7 +234,7 @@ def exampleParseFBQL : Except String IR :=
     "INSERT INTO evidence (title, score) VALUES ('ONS Data', 95) RATIONALE 'Official statistics';"
     "user123" "journalist"
 
-#eval exampleParseFBQL
+-- #eval! exampleParseFBQL
 
 /-- Example: Parse FBQLdt INSERT -/
 def exampleParseFBQLdt : Except String IR :=
@@ -239,7 +242,7 @@ def exampleParseFBQLdt : Except String IR :=
     "INSERT INTO evidence (title : NonEmptyString, score : BoundedNat 0 100) VALUES ('ONS Data', 95) RATIONALE 'Official statistics';"
     "admin456" "admin"
 
-#eval exampleParseFBQLdt
+-- #eval! exampleParseFBQLdt
 
 /-- Example: Parse SELECT -/
 def exampleParseSelect : Except String IR :=
@@ -247,10 +250,10 @@ def exampleParseSelect : Except String IR :=
     "SELECT * FROM evidence;"
     "user123" "journalist"
 
-#eval exampleParseSelect
+-- #eval! exampleParseSelect
 
 /-- Example: Complete pipeline with serialization -/
-def examplePipelineWithSerialization : IO Unit := do
+noncomputable def examplePipelineWithSerialization : IO Unit := do
   let config := defaultFBQLConfig "user123" "journalist"
 
   match runPipelineAndSerialize
@@ -291,5 +294,7 @@ def runTests : IO Unit := do
   let _ ← testValidFBQL
   let _ ← testInvalidQuery
   IO.println "=== Tests Complete ==="
+
+end -- noncomputable section
 
 end FbqlDt.Pipeline
