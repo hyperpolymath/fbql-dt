@@ -21,7 +21,7 @@ This specification defines dependent types for encoding functional dependencies,
 3. [Normalization Steps](#3-normalization-steps)
 4. [Multi-Valued Dependencies](#4-multi-valued-dependencies)
 5. [Integration with Form.Normalizer](#5-integration-with-formnormalizer)
-6. [GQL Syntax Extensions](#6-fql-syntax-extensions)
+6. [GQL Syntax Extensions](#6-gql-syntax-extensions)
 7. [Complete Examples](#7-complete-examples)
 
 ---
@@ -495,7 +495,7 @@ def verifyNormalization (step : NormalizationStep)
 
 ### 6.1 Schema Definition with Normal Form
 
-```fql
+```gql
 -- Declare target normal form
 CREATE COLLECTION employees (
   employee_id : UUID PRIMARY KEY,
@@ -509,7 +509,7 @@ CREATE COLLECTION employees (
 
 ### 6.2 Functional Dependency Declaration
 
-```fql
+```gql
 -- Explicit FD declaration
 CREATE COLLECTION employees (
   employee_id : UUID PRIMARY KEY,
@@ -527,7 +527,7 @@ CREATE COLLECTION employees (
 
 ### 6.3 Normalization Commands
 
-```fql
+```gql
 -- Discover FDs
 DISCOVER DEPENDENCIES
 FROM employees
@@ -564,7 +564,7 @@ RATIONALE "Eliminating transitive dependency department -> dept_location";
 
 ### 7.1 Employee Schema Normalization
 
-```fql
+```gql
 -- Initial schema (2NF, violates 3NF)
 CREATE COLLECTION employees_raw (
   employee_id : UUID PRIMARY KEY,
@@ -620,7 +620,7 @@ RATIONALE "Normalizing to 3NF to eliminate update anomalies";
 
 ### 7.2 Type-Safe Query After Normalization
 
-```fql
+```gql
 -- Query across normalized tables (type-safe join)
 SELECT (
   e : Employee | e.salary > 50000,
@@ -637,7 +637,7 @@ RETURNING (List (Employee × Department) |
 
 ### 7.3 Reversible Normalization
 
-```fql
+```gql
 -- Apply normalization
 APPLY NORMALIZATION proposal
 WITH_INVERSE (
@@ -747,6 +747,6 @@ Suggestions:
 **Document Status**: Specification
 
 **See Also**:
-- [Lithoglyph Self-Normalizing Specification](https://github.com/hyperpolymath/formdb/blob/main/spec/self-normalizing.adoc)
+- [Lithoglyph Self-Normalizing Specification](https://github.com/hyperpolymath/lithoglyph/blob/main/spec/self-normalizing.adoc)
 - [GQL Dependent Types Complete Specification](./GQL_Dependent_Types_Complete_Specification.md)
-- [Form.Normalizer Architecture](https://github.com/hyperpolymath/formdb/blob/main/ARCHITECTURE.adoc)
+- [Form.Normalizer Architecture](https://github.com/hyperpolymath/lithoglyph/blob/main/ARCHITECTURE.adoc)

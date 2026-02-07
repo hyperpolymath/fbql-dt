@@ -1,12 +1,12 @@
 ; SPDX-License-Identifier: PMPL-1.0-or-later
-; FormDB Ecosystem - Unified Roadmap to MVP 1.0.0
+; Lithoglyph Ecosystem - Unified Roadmap to MVP 1.0.0
 ; Media-Type: application/vnd.roadmap+scm
 ;
-; This file is distributed to all FormDB ecosystem repos:
-; - formdb (core database)
+; This file is distributed to all Lithoglyph ecosystem repos:
+; - lithoglyph (core database)
 ; - fdql-dt (dependently-typed query language)
-; - formdb-studio (GUI)
-; - formdb-debugger (recovery tool)
+; - lithoglyph-studio (GUI)
+; - lithoglyph-debugger (recovery tool)
 
 (unified-roadmap
   (metadata
@@ -21,7 +21,7 @@
   ;; ============================================================================
   (ecosystem-summary
     (components
-      (formdb
+      (lithoglyph
         (version "0.0.4")
         (completion 70)
         (role "Core database engine")
@@ -31,12 +31,12 @@
         (completion 85)
         (role "Dependently-typed query language")
         (tech "Lean 4 + Zig"))
-      (formdb-studio
+      (lithoglyph-studio
         (version "0.1.0")
         (completion 45)
         (role "Zero-friction GUI")
         (tech "ReScript + Tauri 2.0 + Rust"))
-      (formdb-debugger
+      (lithoglyph-debugger
         (version "0.1.0")
         (completion 55)
         (role "Proof-carrying recovery tool")
@@ -44,7 +44,7 @@
 
     (architecture
       "┌─────────────────────────────────────────────────────────────┐"
-      "│  FormDB Studio (GUI)                                        │"
+      "│  Lithoglyph Studio (GUI)                                        │"
       "│    ↓ generates FQLdt code                                   │"
       "├─────────────────────────────────────────────────────────────┤"
       "│  FQLdt (Lean 4)                                             │"
@@ -53,12 +53,12 @@
       "│  Form.Bridge (Zig ABI)                                      │"
       "│    ↓ calls                                                  │"
       "├─────────────────────────────────────────────────────────────┤"
-      "│  FormDB Core (Forth + Factor)                               │"
+      "│  Lithoglyph Core (Forth + Factor)                               │"
       "│    Form.Runtime → Form.Normalizer → Form.Model → Form.Blocks│"
       "├─────────────────────────────────────────────────────────────┤"
-      "│  FormDB Debugger (alongside)                                │"
+      "│  Lithoglyph Debugger (alongside)                                │"
       "│    ↓ proves recovery safe                                   │"
-      "│  FormDB + FQLdt                                             │"
+      "│  Lithoglyph + FQLdt                                             │"
       "└─────────────────────────────────────────────────────────────┘"))
 
   ;; ============================================================================
@@ -67,19 +67,19 @@
   (critical-path
     (phase (id "P1") (name "Core Integration")
       (duration "weeks 1-6")
-      (focus "FormDB + FQLdt integration")
+      (focus "Lithoglyph + FQLdt integration")
 
-      (formdb-tasks
+      (lithoglyph-tasks
         (task "Complete M11: HTTP API Server" priority: critical status: in-progress)
         (task "Expose Form.Bridge FFI for proof verification" priority: high status: pending)
         (task "Add CBOR proof blob acceptance in query path" priority: high status: pending))
 
       (fdql-dt-tasks
         (task "M5: Zig FFI bridge to Form.Bridge" priority: critical status: not-started)
-        (task "M6: FQL parser (integrate with FormDB's EBNF)" priority: high status: not-started)
+        (task "M6: GQL parser (integrate with Lithoglyph's EBNF)" priority: high status: not-started)
         (task "Proof blob serialization (CBOR RFC 8949)" priority: high status: pending))
 
-      (checkpoint "FQLdt can compile a query → proof blob → FormDB accepts and executes"))
+      (checkpoint "FQLdt can compile a query → proof blob → Lithoglyph accepts and executes"))
 
     (phase (id "P2") (name "User-Facing Tools")
       (duration "weeks 7-10")
@@ -88,12 +88,12 @@
       (studio-tasks
         (task "Verify ReScript/Tauri build pipeline" priority: critical status: pending)
         (task "Wire ReScript UI to FQLdt code generation" priority: high status: pending)
-        (task "Connect to FormDB HTTP API" priority: high status: blocked)
+        (task "Connect to Lithoglyph HTTP API" priority: high status: blocked)
         (task "Test schema creation → query → results flow" priority: medium status: pending))
 
       (debugger-tasks
         (task "Wire Idris REPL to PostgreSQL adapter" priority: high status: pending)
-        (task "FormDB adapter: parse real journal files" priority: high status: partial)
+        (task "Lithoglyph adapter: parse real journal files" priority: high status: partial)
         (task "Complete Ratatui TUI interface" priority: medium status: in-progress)
         (task "Integration: proof verification before recovery" priority: medium status: pending))
 
@@ -116,19 +116,19 @@
   ;; DEPENDENCY GRAPH
   ;; ============================================================================
   (dependencies
-    (formdb-m11
-      (name "FormDB HTTP API Server")
-      (blocks "Studio M2" "Debugger FormDB adapter")
+    (lithoglyph-m11
+      (name "Lithoglyph HTTP API Server")
+      (blocks "Studio M2" "Debugger Lithoglyph adapter")
       (priority critical))
 
     (fdql-dt-m5
       (name "FQLdt Zig FFI Bridge")
       (blocks "Studio M3" "Real type checking")
-      (depends-on "FormDB Form.Bridge")
+      (depends-on "Lithoglyph Form.Bridge")
       (priority critical))
 
     (fdql-dt-m6
-      (name "FQLdt FQL Parser")
+      (name "FQLdt GQL Parser")
       (blocks "Full FQLdt compilation")
       (depends-on "fdql-dt-m5")
       (priority high))
@@ -153,12 +153,12 @@
       (options
         "Hand-rolled parser (simple, no deps)"
         "Lean 4 Parsec (built-in)"
-        "Integrate with FormDB's Factor-based FDQL parser")
-      (recommendation "Integrate - reuse FormDB's EBNF grammar via FFI")
+        "Integrate with Lithoglyph's Factor-based FDQL parser")
+      (recommendation "Integrate - reuse Lithoglyph's EBNF grammar via FFI")
       (impact "Affects M6 implementation"))
 
     (decision (id "DECISION-003")
-      (title "FormDB integration strategy for FQLdt")
+      (title "Lithoglyph integration strategy for FQLdt")
       (repo "fdql-dt")
       (options
         "Mock Forth core for MVP"
@@ -180,7 +180,7 @@
     (release (version "1.2.0") (name "Multi-Database Support")
       (features
         "Debugger: SQLite adapter completion"
-        "FormDB: clustering/replication (Form.ControlPlane begins)"
+        "Lithoglyph: clustering/replication (Form.ControlPlane begins)"
         "Studio: connection manager for multiple DBs"))
 
     (release (version "2.0.0") (name "Agentic Ecosystem")

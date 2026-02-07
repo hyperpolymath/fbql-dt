@@ -1,17 +1,17 @@
 -- SPDX-License-Identifier: PMPL-1.0-or-later
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
--- Lexer for FBQLdt/FBQL
--- Tokenizes source text according to spec/FBQLdt-Lexical.md
+-- Lexer for GQL-DT/GQL
+-- Tokenizes source text according to spec/GQL-DT-Lexical.md
 -- Rewritten without Parsec for Lean 4.15.0 compatibility
 
 namespace FbqlDt.Lexer
 
 /-!
-# FBQLdt Lexer
+# GQL-DT Lexer
 
-Tokenizes FBQLdt/FBQL source code into tokens according to the formal
-lexical specification (spec/FBQLdt-Lexical.md).
+Tokenizes GQL-DT/GQL source code into tokens according to the formal
+lexical specification (spec/GQL-DT-Lexical.md).
 
 **Token Types:**
 - Keywords: SELECT, INSERT, CREATE, etc. (80+ keywords)
@@ -230,7 +230,7 @@ def proofKeywords : List (String × TokenType) := [
   ("simp", .kwSimp), ("sorry", .kwSorry)
 ]
 
-def formdbKeywords : List (String × TokenType) := [
+def lithoglyphKeywords : List (String × TokenType) := [
   ("RATIONALE", .kwRationale), ("TARGET_NORMAL_FORM", .kwTarget),
   ("NORMALIZE", .kwNormalize),
   ("PERMISSIONS", .kwPermissions), ("GRANT", .kwGrant), ("REVOKE", .kwRevoke),
@@ -239,7 +239,7 @@ def formdbKeywords : List (String × TokenType) := [
 ]
 
 def lookupKeyword (s : String) : Option TokenType :=
-  (typeKeywords ++ proofKeywords ++ formdbKeywords).lookup s
+  (typeKeywords ++ proofKeywords ++ lithoglyphKeywords).lookup s
   <|>
   sqlKeywords.lookup s.toUpper
 

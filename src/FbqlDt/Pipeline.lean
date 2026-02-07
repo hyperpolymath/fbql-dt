@@ -19,14 +19,14 @@ noncomputable section
 open Lexer Parser TypeChecker TypeInference IR Serialization AST
 
 /-!
-# FBQLdt/FBQL Complete Parsing Pipeline
+# GQL-DT/GQL Complete Parsing Pipeline
 
 Provides end-to-end processing from source text to executable IR.
 
 **Pipeline Stages:**
 
 ```
-Source Text (FBQL or FBQLdt)
+Source Text (GQL or GQL-DT)
     ↓ 1. Lexer
 Tokens
     ↓ 2. Parser
@@ -42,8 +42,8 @@ Lithoglyph Native or SQL Backend
 ```
 
 **Two Modes:**
-- **FBQLdt**: Explicit types + proofs → Compile-time verification
-- **FBQL**: Type inference + auto-proofs → Runtime validation fallback
+- **GQL-DT**: Explicit types + proofs → Compile-time verification
+- **GQL**: Type inference + auto-proofs → Runtime validation fallback
 -/
 
 -- ============================================================================
@@ -65,8 +65,8 @@ structure PipelineConfig where
   serializationFormat : SerializationFormat
   deriving Repr
 
-/-- Default configuration for FBQL (user tier) -/
-def defaultFBQLConfig (userId roleId : String) : PipelineConfig := {
+/-- Default configuration for GQL (user tier) -/
+def defaultGQLConfig (userId roleId : String) : PipelineConfig := {
   mode := .gql,
   schema := evidenceSchema,  -- TODO: Schema registry lookup
   permissions := {
@@ -80,8 +80,8 @@ def defaultFBQLConfig (userId roleId : String) : PipelineConfig := {
   serializationFormat := .cbor
 }
 
-/-- Default configuration for FBQLdt (admin tier) -/
-def defaultFBQLdtConfig (userId roleId : String) : PipelineConfig := {
+/-- Default configuration for GQL-DT (admin tier) -/
+def defaultGQLdtConfig (userId roleId : String) : PipelineConfig := {
   mode := .gqld,
   schema := evidenceSchema,
   permissions := {
@@ -116,8 +116,8 @@ noncomputable def parseTokens (tokens : List Token) (config : PipelineConfig) : 
 
 /-- Stage 3: Type check AST -/
 def typeCheckAST (stmt : Statement) (config : PipelineConfig) : Except String Statement :=
-  -- For FBQL, type inference already happened in parser
-  -- For FBQLdt, verify explicit types and proofs
+  -- For GQL, type inference already happened in parser
+  -- For GQL-DT, verify explicit types and proofs
   match config.mode with
   | .gql => .ok stmt  -- Type inference done, runtime validation will catch errors
   | .gqld =>
@@ -127,10 +127,10 @@ def typeCheckAST (stmt : Statement) (config : PipelineConfig) : Except String St
 /-- Stage 4: Generate IR from AST -/
 def generateIRFromAST (stmt : Statement) (config : PipelineConfig) : Except String IR := do
   match stmt with
-  | .insertFBQL inferred =>
+  | .insertGQL inferred =>
       -- TODO: Convert InferredInsert to IR.Insert (needs schema lookup)
       .error "InferredInsert → IR conversion not yet implemented"
-  | .insertFBQLdt inferred =>
+  | .insertGQLdt inferred =>
       -- TODO: Convert InferredInsert to IR.Insert (needs schema lookup)
       .error "InferredInsert → IR conversion not yet implemented"
   | .select selectStmt =>
@@ -188,13 +188,13 @@ noncomputable def runPipelineAndSerialize (source : String) (config : PipelineCo
 -- Convenience Functions
 -- ============================================================================
 
-/-- Parse FBQL query (user tier) -/
-noncomputable def parseFBQL (source : String) (userId roleId : String) : Except String IR :=
-  runPipeline source (defaultFBQLConfig userId roleId)
+/-- Parse GQL query (user tier) -/
+noncomputable def parseGQL (source : String) (userId roleId : String) : Except String IR :=
+  runPipeline source (defaultGQLConfig userId roleId)
 
-/-- Parse FBQLdt query (admin tier) -/
-noncomputable def parseFBQLdt (source : String) (userId roleId : String) : Except String IR :=
-  runPipeline source (defaultFBQLdtConfig userId roleId)
+/-- Parse GQL-DT query (admin tier) -/
+noncomputable def parseGQLdt (source : String) (userId roleId : String) : Except String IR :=
+  runPipeline source (defaultGQLdtConfig userId roleId)
 
 /-- Parse and execute query -/
 def parseAndExecute (source : String) (config : PipelineConfig) : IO (Except String Unit) := do
@@ -228,25 +228,25 @@ def formatError (err : PipelineError) : String :=
 -- Examples
 -- ============================================================================
 
-/-- Example: Parse FBQL INSERT -/
-def exampleParseFBQL : Except String IR :=
-  parseFBQL
+/-- Example: Parse GQL INSERT -/
+def exampleParseGQL : Except String IR :=
+  parseGQL
     "INSERT INTO evidence (title, score) VALUES ('ONS Data', 95) RATIONALE 'Official statistics';"
     "user123" "journalist"
 
--- #eval! exampleParseFBQL
+-- #eval! exampleParseGQL
 
-/-- Example: Parse FBQLdt INSERT -/
-def exampleParseFBQLdt : Except String IR :=
-  parseFBQLdt
+/-- Example: Parse GQL-DT INSERT -/
+def exampleParseGQLdt : Except String IR :=
+  parseGQLdt
     "INSERT INTO evidence (title : NonEmptyString, score : BoundedNat 0 100) VALUES ('ONS Data', 95) RATIONALE 'Official statistics';"
     "admin456" "admin"
 
--- #eval! exampleParseFBQLdt
+-- #eval! exampleParseGQLdt
 
 /-- Example: Parse SELECT -/
 def exampleParseSelect : Except String IR :=
-  parseFBQL
+  parseGQL
     "SELECT * FROM evidence;"
     "user123" "journalist"
 
@@ -254,7 +254,7 @@ def exampleParseSelect : Except String IR :=
 
 /-- Example: Complete pipeline with serialization -/
 noncomputable def examplePipelineWithSerialization : IO Unit := do
-  let config := defaultFBQLConfig "user123" "journalist"
+  let config := defaultGQLConfig "user123" "journalist"
 
   match runPipelineAndSerialize
     "INSERT INTO evidence (title, score) VALUES ('ONS Data', 95) RATIONALE 'Official statistics';"
@@ -268,19 +268,19 @@ noncomputable def examplePipelineWithSerialization : IO Unit := do
 -- Testing & Validation
 -- ============================================================================
 
-/-- Test: Valid FBQL query should parse -/
-def testValidFBQL : IO Bool := do
-  match parseFBQL "INSERT INTO evidence (title) VALUES ('Test') RATIONALE 'Test';" "test" "user" with
+/-- Test: Valid GQL query should parse -/
+def testValidGQL : IO Bool := do
+  match parseGQL "INSERT INTO evidence (title) VALUES ('Test') RATIONALE 'Test';" "test" "user" with
   | .ok _ =>
-      IO.println "✓ Valid FBQL query parsed"
+      IO.println "✓ Valid GQL query parsed"
       return true
   | .error msg =>
-      IO.println s!"✗ Valid FBQL query failed: {msg}"
+      IO.println s!"✗ Valid GQL query failed: {msg}"
       return false
 
 /-- Test: Invalid query should error -/
 def testInvalidQuery : IO Bool := do
-  match parseFBQL "INVALID SYNTAX HERE" "test" "user" with
+  match parseGQL "INVALID SYNTAX HERE" "test" "user" with
   | .ok _ =>
       IO.println "✗ Invalid query should not parse"
       return false
@@ -290,8 +290,8 @@ def testInvalidQuery : IO Bool := do
 
 /-- Run all tests -/
 def runTests : IO Unit := do
-  IO.println "=== FBQLdt Pipeline Tests ==="
-  let _ ← testValidFBQL
+  IO.println "=== GQL-DT Pipeline Tests ==="
+  let _ ← testValidGQL
   let _ ← testInvalidQuery
   IO.println "=== Tests Complete ==="
 

@@ -1,5 +1,5 @@
 ;; SPDX-License-Identifier: PMPL-1.0-or-later
-;; NEUROSYM.scm - Neurosymbolic integration config for formdb
+;; NEUROSYM.scm - Neurosymbolic integration config for lithoglyph
 
 (define neurosym-config
   `((version . "1.0.0")

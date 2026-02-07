@@ -8,7 +8,7 @@
 
 ## Overview
 
-Milestone 6 (FBQLdt/FBQL Parser) has been substantially completed. The parser infrastructure is feature-complete for basic queries (INSERT, SELECT, UPDATE, DELETE), with full CBOR encoding/decoding, type inference, and IR generation.
+Milestone 6 (GQL-DT/GQL Parser) has been substantially completed. The parser infrastructure is feature-complete for basic queries (INSERT, SELECT, UPDATE, DELETE), with full CBOR encoding/decoding, type inference, and IR generation.
 
 ## Completed Components
 
@@ -50,7 +50,7 @@ def lookupKeyword (s : String) : Option TokenType
 
 | Statement | Status | Features |
 |-----------|--------|----------|
-| **INSERT** | ✅ Complete | Both FBQL (inferred) and FBQLdt (explicit types) |
+| **INSERT** | ✅ Complete | Both GQL (inferred) and GQL-DT (explicit types) |
 | **SELECT** | ✅ Complete | SELECT list, FROM clause, WHERE, ORDER BY, LIMIT |
 | **UPDATE** | ✅ Complete | SET assignments, optional WHERE, mandatory RATIONALE |
 | **DELETE** | ✅ Complete | Mandatory WHERE (safety), mandatory RATIONALE |
@@ -168,7 +168,7 @@ def inferInsert (schema : Schema) (table : String) (columns : List String) (valu
 **6-Stage Pipeline:** ✅
 1. **Tokenize** - Source → Tokens
 2. **Parse** - Tokens → AST
-3. **Type Check** - Validate AST (FBQLdt mode)
+3. **Type Check** - Validate AST (GQL-DT mode)
 4. **Generate IR** - AST → Typed IR
 5. **Validate Permissions** - Check type whitelists
 6. **Serialize** - IR → CBOR/JSON/Binary
@@ -179,8 +179,8 @@ def inferInsert (schema : Schema) (table : String) (columns : List String) (valu
 - `SerializationFormat` - json, cbor, binary, sql
 
 **Convenience Functions:** ✅
-- `parseFBQL` - User tier (type inference)
-- `parseFBQLdt` - Admin tier (explicit types)
+- `parseGQL` - User tier (type inference)
+- `parseGQL-DT` - Admin tier (explicit types)
 - `parseAndExecute` - Parse + execute on Lithoglyph
 
 **Error Reporting:** ✅
@@ -188,10 +188,10 @@ def inferInsert (schema : Schema) (table : String) (columns : List String) (valu
 - `formatError` - Human-readable error messages
 
 **Examples & Tests:** ✅
-- `exampleParseFBQL` - INSERT with type inference
-- `exampleParseFBQLdt` - INSERT with explicit types
+- `exampleParseGQL` - INSERT with type inference
+- `exampleParseGQL-DT` - INSERT with explicit types
 - `exampleParseSelect` - SELECT query
-- `testValidFBQL`, `testInvalidQuery` - Validation tests
+- `testValidGQL`, `testInvalidQuery` - Validation tests
 
 **AST → IR Conversion:** ⚠️ Partial (15% remaining)
 - `generateIRFromAST` - Handles SELECT, stubs for INSERT/UPDATE/DELETE
@@ -240,7 +240,7 @@ def inferInsert (schema : Schema) (table : String) (columns : List String) (valu
 | **Parser Technology** | Lean 4 parser combinators | Dependent types require proof execution |
 | **Execution Strategy** | Native IR execution | Preserves type safety, faster than SQL (170ms vs 270ms) |
 | **Serialization** | CBOR primary, JSON/Binary/SQL secondary | RFC 8949 deterministic, proof blob transport |
-| **Two-Tier Architecture** | One language, two syntaxes + permissions | FBQLdt (advanced) + FBQL (users) + granular permissions |
+| **Two-Tier Architecture** | One language, two syntaxes + permissions | GQL-DT (advanced) + GQL (users) + granular permissions |
 | **ABI/FFI Standard** | Idris2 ABI + Zig FFI | Per hyperpolymath universal standard |
 | **Integration Priority** | ReScript → Rust → Julia/Deno → Others | Aligned with existing ecosystem |
 
@@ -254,7 +254,7 @@ def inferInsert (schema : Schema) (table : String) (columns : List String) (valu
 |------|-------|--------|---------|
 | `src/FbqlDt/Lexer.lean` | 407 | ✅ Complete | Tokenization |
 | `src/FbqlDt/Parser.lean` | 550+ | ✅ Complete | Parser combinators, statements |
-| `src/FbqlDt/TypeInference.lean` | ~200 | ✅ Complete | Type inference for FBQL |
+| `src/FbqlDt/TypeInference.lean` | ~200 | ✅ Complete | Type inference for GQL |
 | `src/FbqlDt/IR.lean` | 410 | 🟡 90% | Typed IR, serialization |
 | `src/FbqlDt/Serialization.lean` | 530+ | 🟡 95% | CBOR, JSON, Binary, SQL |
 | `src/FbqlDt/Pipeline.lean` | 290 | 🟡 85% | End-to-end orchestration |
@@ -273,7 +273,7 @@ def inferInsert (schema : Schema) (table : String) (columns : List String) (valu
 
 1. **Schema Registry**
    - Lithoglyph must expose schema lookup API
-   - FBQLdt parser needs runtime schema access
+   - GQL-DT parser needs runtime schema access
    - Format: `getSchema (tableName : String) : IO (Option Schema)`
 
 2. **Native IR Execution**

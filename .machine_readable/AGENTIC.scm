@@ -1,5 +1,5 @@
 ;; SPDX-License-Identifier: PMPL-1.0-or-later
-;; AGENTIC.scm - AI agent interaction patterns for formdb
+;; AGENTIC.scm - AI agent interaction patterns for lithoglyph
 
 (define agentic-config
   `((version . "1.0.0")

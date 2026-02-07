@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: PMPL-1.0-or-later
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
--- Type Checker for FBQLdt
+-- Type Checker for GQL-DT
 -- Enforces type safety and generates proof obligations
 
 import FbqlDt.AST

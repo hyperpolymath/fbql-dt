@@ -1,4 +1,4 @@
-# FBQLdt Language Design - Complete Status
+# GQL-DT Language Design - Complete Status
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -53,9 +53,9 @@
 **Status:** ✅ COMPLETE
 
 **Files:**
-- `spec/FBQLdt-Grammar.ebnf` - Complete EBNF grammar (800+ lines)
-- `spec/FBQLdt-Lexical.md` - Lexical specification (700+ lines)
-- `spec/FBQLdt-Railroad-Diagrams.md` - Visual syntax (600+ lines)
+- `spec/GQL-DT-Grammar.ebnf` - Complete EBNF grammar (800+ lines)
+- `spec/GQL-DT-Lexical.md` - Lexical specification (700+ lines)
+- `spec/GQL-DT-Railroad-Diagrams.md` - Visual syntax (600+ lines)
 - `spec/README.md` - Specification index
 
 **Formal Specifications:**
@@ -146,7 +146,7 @@ Level 11: ()  (function call, grouping)
 
 **Type Safety Enforcement:**
 
-#### Compile-Time (FBQLdt Tier)
+#### Compile-Time (GQL-DT Tier)
 ✅ **Type-Indexed Values**
 ```lean
 inductive TypedValue : TypeExpr → Type where
@@ -176,7 +176,7 @@ def mkInsert (schema : Schema) ... (h : <proof-obligation>) : InsertStmt schema
 - Validation happens at construction time
 - Impossible to bypass type checks
 
-#### Runtime (FBQL Tier)
+#### Runtime (GQL Tier)
 ✅ **Type Inference**
 - Infer dependent types from SQL-like syntax
 - Auto-generate proof attempts
@@ -189,8 +189,8 @@ def mkInsert (schema : Schema) ... (h : <proof-obligation>) : InsertStmt schema
 
 ✅ **Four-Layer Defense**
 1. UI validation (Lithoglyph Studio forms/dropdowns)
-2. Type inference + runtime checks (FBQL parser)
-3. Compile-time proofs (FBQLdt parser)
+2. Type inference + runtime checks (GQL parser)
+3. Compile-time proofs (GQL-DT parser)
 4. Database constraints (final safety net)
 
 **Theorem:**
@@ -398,7 +398,7 @@ let insertEvidence = async () => {
 
 **Architecture:**
 ```
-FBQLdt/FBQL Source
+GQL-DT/GQL Source
     ↓
 Lean 4 Parser
     ↓
@@ -428,7 +428,7 @@ Direct storage operations (no SQL)
 
 **Tiers:**
 
-| Feature | FBQLdt (Advanced) | FBQL (Users) |
+| Feature | GQL-DT (Advanced) | GQL (Users) |
 |---------|-------------------|--------------|
 | Syntax | Lean 4-style | SQL-style |
 | Types | Explicit | Inferred |
@@ -484,11 +484,11 @@ ReScript/Rust/Julia/Gleam/etc.
 
 **Bonus:**
 - ✅ IR design (native execution)
-- ✅ Type inference (FBQL tier)
+- ✅ Type inference (GQL tier)
 - ✅ Permission system (granular controls)
 - ✅ Multi-language bindings (8 languages)
 - ✅ Execution strategy (native vs SQL)
-- ✅ Two-tier architecture (FBQLdt + FBQL)
+- ✅ Two-tier architecture (GQL-DT + GQL)
 - ✅ ABI/FFI design (Idris2 + Zig)
 
 ---

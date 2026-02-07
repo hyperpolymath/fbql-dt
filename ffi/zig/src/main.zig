@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: PMPL-1.0-or-later
 // SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell (@hyperpolymath)
 //
-// main.zig - Zig FFI implementation for FBQLdt ABI
+// main.zig - Zig FFI implementation for GQL-DT ABI
 // Pure ABI bridge - all safety logic in Idris2
 
 const std = @import("std");
 const testing = std.testing;
 
-// Status codes (matches Idris2 FbqldtStatus)
+// Status codes (matches Idris2 GqldtStatus)
 pub const Status = enum(i32) {
     ok = 0,
     invalid_arg = 1,
@@ -19,11 +19,11 @@ pub const Status = enum(i32) {
 };
 
 // Opaque handle types (matches Idris2 handle types)
-pub const FbqldtDb = opaque {};
-pub const FbqldtQuery = opaque {};
-pub const FbqldtSchema = opaque {};
-pub const FbqldtType = opaque {};
-pub const FbqldtResult = opaque {};
+pub const GqldtDb = opaque {};
+pub const GqldtQuery = opaque {};
+pub const GqldtSchema = opaque {};
+pub const GqldtType = opaque {};
+pub const GqldtResult = opaque {};
 
 // Global state for library initialization
 var initialized: bool = false;
@@ -33,25 +33,25 @@ var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 // Library Lifecycle
 ////////////////////////////////////////////////////////////////////////////////
 
-/// Initialize FBQLdt library
+/// Initialize GQLdt library
 /// CRITICAL: Pure ABI bridge - delegates to Idris2 for actual initialization
-export fn fbqldt_init() callconv(.c) i32 {
+export fn gqldt_init() callconv(.c) i32 {
     if (initialized) return @intFromEnum(Status.ok);
 
     // TODO: Call Idris2 initialization function
-    // const idris_status = idris2_fbqldt_init();
+    // const idris_status = idris2_gqldt_init();
     // if (idris_status != 0) return @intFromEnum(Status.internal_error);
 
     initialized = true;
     return @intFromEnum(Status.ok);
 }
 
-/// Cleanup FBQLdt library
-export fn fbqldt_cleanup() callconv(.c) void {
+/// Cleanup GQLdt library
+export fn gqldt_cleanup() callconv(.c) void {
     if (!initialized) return;
 
     // TODO: Call Idris2 cleanup function
-    // idris2_fbqldt_cleanup();
+    // idris2_gqldt_cleanup();
 
     _ = gpa.deinit();
     initialized = false;
@@ -63,10 +63,10 @@ export fn fbqldt_cleanup() callconv(.c) void {
 
 /// Open database
 /// CRITICAL: Pure ABI bridge - path validation in Idris2 via proven library
-export fn fbqldt_db_open(
+export fn gqldt_db_open(
     path: [*:0]const u8,
     path_len: u64,
-    db_out: *?*FbqldtDb,
+    db_out: *?*GqldtDb,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
     if (path_len == 0) return @intFromEnum(Status.invalid_arg);
@@ -84,7 +84,7 @@ export fn fbqldt_db_open(
 }
 
 /// Close database
-export fn fbqldt_db_close(db: *FbqldtDb) callconv(.c) i32 {
+export fn gqldt_db_close(db: *GqldtDb) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
 
     // TODO: Call Idris2 db_close function
@@ -98,12 +98,12 @@ export fn fbqldt_db_close(db: *FbqldtDb) callconv(.c) i32 {
 // Query Parsing and Type Checking
 ////////////////////////////////////////////////////////////////////////////////
 
-/// Parse FBQLdt query (explicit types)
+/// Parse GQLdt query (explicit types)
 /// CRITICAL: Query validation in Idris2 via Proven.SafeString
-export fn fbqldt_parse(
+export fn gqldt_parse(
     query_str: [*:0]const u8,
     query_len: u64,
-    query_out: *?*FbqldtQuery,
+    query_out: *?*GqldtQuery,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
     if (query_len == 0) return @intFromEnum(Status.invalid_arg);
@@ -119,12 +119,12 @@ export fn fbqldt_parse(
     return @intFromEnum(Status.internal_error);
 }
 
-/// Parse FBQL query (with type inference)
-export fn fbqldt_parse_inferred(
+/// Parse GQL query (with type inference)
+export fn gqldt_parse_inferred(
     query_str: [*:0]const u8,
     query_len: u64,
-    schema: *FbqldtSchema,
-    query_out: *?*FbqldtQuery,
+    schema: *GqldtSchema,
+    query_out: *?*GqldtQuery,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
     if (query_len == 0) return @intFromEnum(Status.invalid_arg);
@@ -142,9 +142,9 @@ export fn fbqldt_parse_inferred(
 
 /// Type-check query against schema
 /// CRITICAL: Type checking in Idris2 with dependent types
-export fn fbqldt_typecheck(
-    query: *FbqldtQuery,
-    schema: *FbqldtSchema,
+export fn gqldt_typecheck(
+    query: *GqldtQuery,
+    schema: *GqldtSchema,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
 
@@ -163,10 +163,10 @@ export fn fbqldt_typecheck(
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Execute query
-export fn fbqldt_execute(
-    db: *FbqldtDb,
-    query: *FbqldtQuery,
-    result_out: *?*FbqldtResult,
+export fn gqldt_execute(
+    db: *GqldtDb,
+    query: *GqldtQuery,
+    result_out: *?*GqldtResult,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
 
@@ -185,8 +185,8 @@ export fn fbqldt_execute(
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Serialize query to CBOR (RFC 8949)
-export fn fbqldt_serialize_cbor(
-    query: *FbqldtQuery,
+export fn gqldt_serialize_cbor(
+    query: *GqldtQuery,
     buffer: [*]u8,
     buffer_len: u64,
     written_out: *u64,
@@ -205,8 +205,8 @@ export fn fbqldt_serialize_cbor(
 }
 
 /// Serialize query to JSON
-export fn fbqldt_serialize_json(
-    query: *FbqldtQuery,
+export fn gqldt_serialize_json(
+    query: *GqldtQuery,
     buffer: [*]u8,
     buffer_len: u64,
     written_out: *u64,
@@ -224,10 +224,10 @@ export fn fbqldt_serialize_json(
 }
 
 /// Deserialize query from CBOR
-export fn fbqldt_deserialize_cbor(
+export fn gqldt_deserialize_cbor(
     buffer: [*]const u8,
     buffer_len: u64,
-    query_out: *?*FbqldtQuery,
+    query_out: *?*GqldtQuery,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
     if (buffer_len == 0) return @intFromEnum(Status.invalid_arg);
@@ -246,10 +246,10 @@ export fn fbqldt_deserialize_cbor(
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Get schema from database for a collection
-export fn fbqldt_get_schema(
-    db: *FbqldtDb,
+export fn gqldt_get_schema(
+    db: *GqldtDb,
     collection_name: [*:0]const u8,
-    schema_out: *?*FbqldtSchema,
+    schema_out: *?*GqldtSchema,
 ) callconv(.c) i32 {
     if (!initialized) return @intFromEnum(Status.internal_error);
 
@@ -267,8 +267,8 @@ export fn fbqldt_get_schema(
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Validate query permissions (two-tier system)
-export fn fbqldt_validate_permissions(
-    query: *FbqldtQuery,
+export fn gqldt_validate_permissions(
+    query: *GqldtQuery,
     user_id: [*:0]const u8,
     permissions: *const anyopaque,
 ) callconv(.c) i32 {
@@ -288,7 +288,7 @@ export fn fbqldt_validate_permissions(
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Free query handle
-export fn fbqldt_query_free(query: *FbqldtQuery) callconv(.c) void {
+export fn gqldt_query_free(query: *GqldtQuery) callconv(.c) void {
     if (!initialized) return;
 
     // TODO: Call Idris2 query_free function
@@ -298,7 +298,7 @@ export fn fbqldt_query_free(query: *FbqldtQuery) callconv(.c) void {
 }
 
 /// Free schema handle
-export fn fbqldt_schema_free(schema: *FbqldtSchema) callconv(.c) void {
+export fn gqldt_schema_free(schema: *GqldtSchema) callconv(.c) void {
     if (!initialized) return;
 
     // TODO: Call Idris2 schema_free function
@@ -335,9 +335,9 @@ test "status codes match Idris2 ABI" {
 }
 
 test "library initialization" {
-    const status = fbqldt_init();
+    const status = gqldt_init();
     try testing.expectEqual(@intFromEnum(Status.ok), status);
-    fbqldt_cleanup();
+    gqldt_cleanup();
 }
 
 test "validate_c_string rejects null strings" {

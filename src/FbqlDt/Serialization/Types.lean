@@ -100,7 +100,7 @@ instance : BEq CBORValue where
   beq := cborValueBeq
 
 -- ============================================================================
--- CBOR Semantic Tags for FBQLdt
+-- CBOR Semantic Tags for GQL-DT
 -- ============================================================================
 
 /-- CBOR Tag 55800: BoundedNat

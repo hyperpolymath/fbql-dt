@@ -2,7 +2,7 @@
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
 -- Abstract Syntax Tree with Dependent Types
--- Type-safe representation of FBQLdt queries
+-- Type-safe representation of GQL-DT queries
 
 import FbqlDt.Types
 import FbqlDt.Types.BoundedNat
@@ -20,7 +20,7 @@ open Types Provenance Prompt
 
 /-- Inferred type from literals (before type checking)
 
-    Used by FBQL parser to represent values before schema lookup.
+    Used by GQL parser to represent values before schema lookup.
 -/
 inductive InferredType where
   | nat : Nat → InferredType

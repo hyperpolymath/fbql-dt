@@ -1,37 +1,37 @@
 ;; SPDX-License-Identifier: PMPL-1.0-or-later
 ;; SPDX-FileCopyrightText: 2025 hyperpolymath
 ;;
-;; ECOSYSTEM.scm - Project ecosystem positioning for fbql-dt
+;; ECOSYSTEM.scm - Project ecosystem positioning for gql-dt
 ;; Media-Type: application/vnd.ecosystem+scm
 
 (ecosystem
   (version "1.0.0")
-  (name "fbql-dt")
+  (name "gql-dt")
   (type "language-extension")
-  (purpose "Add dependent types to FormDB Query Language for compile-time verification")
+  (purpose "Add dependent types to Lithoglyph Query Language for compile-time verification")
 
   (position-in-ecosystem
     (layer "query-language")
-    (role "type-safe frontend to FormDB")
+    (role "type-safe frontend to Lithoglyph")
     (integration-point "Form.Bridge (Zig FFI)"))
 
   (related-projects
     (project
-      (name "formdb")
-      (repo "https://github.com/hyperpolymath/formdb")
+      (name "lithoglyph")
+      (repo "https://github.com/hyperpolymath/lithoglyph")
       (relationship sibling-standard)
       (description "The narrative-first database that FQLdt queries")
       (integration "FQLdt compiles to operations on Form.Model via Form.Bridge"))
 
     (project
-      (name "formdb-studio")
-      (repo "https://github.com/hyperpolymath/formdb-studio")
+      (name "lithoglyph-studio")
+      (repo "https://github.com/hyperpolymath/lithoglyph-studio")
       (relationship potential-consumer)
       (description "Zero-friction GUI that could use FQLdt for type-safe queries"))
 
     (project
-      (name "formdb-debugger")
-      (repo "https://github.com/hyperpolymath/formdb-debugger")
+      (name "lithoglyph-debugger")
+      (repo "https://github.com/hyperpolymath/lithoglyph-debugger")
       (relationship sibling-standard)
       (description "Proof-carrying database debugger (Lean 4 + Idris 2)")
       (integration "Shares Lean 4 proof infrastructure"))
@@ -44,8 +44,8 @@
       (integration "Primary use case for PROMPT score types"))
 
     (project
-      (name "zotero-formdb")
-      (repo "https://github.com/hyperpolymath/zotero-formdb")
+      (name "zotero-lithoglyph")
+      (repo "https://github.com/hyperpolymath/zotero-lithoglyph")
       (relationship potential-consumer)
       (description "Reference manager with PROMPT scores")
       (integration "Production pilot for refinement types"))
@@ -72,7 +72,7 @@
       (integration "Provides tactics and proof automation")))
 
   (what-this-is
-    (item "Dependent type extension for FQL")
+    (item "Dependent type extension for GQL")
     (item "Compile-time constraint verification")
     (item "Provenance tracking at type level")
     (item "PROMPT score type safety")
@@ -80,7 +80,7 @@
     (item "Lean 4 implementation with Zig FFI"))
 
   (what-this-is-not
-    (item "Not a replacement for standard FQL (backward compatible)")
+    (item "Not a replacement for standard GQL (backward compatible)")
     (item "Not a general-purpose dependently-typed language")
-    (item "Not a database engine (uses FormDB)")
-    (item "Not required for FormDB usage (optional verification layer)")))
+    (item "Not a database engine (uses Lithoglyph)")
+    (item "Not required for Lithoglyph usage (optional verification layer)")))

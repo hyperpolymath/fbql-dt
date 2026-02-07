@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: PMPL-1.0-or-later
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
--- Parser for FBQLdt/FBQL
+-- Parser for GQL-DT/GQL
 -- Parses tokens into typed AST
 
 import FbqlDt.Lexer
@@ -19,13 +19,13 @@ namespace FbqlDt.Parser
 open Lexer AST TypeInference IR Types
 
 /-!
-# FBQLdt/FBQL Parser
+# GQL-DT/GQL Parser
 
 Parses tokenized source into typed AST.
 
 **Two parsing modes:**
-1. **FBQLdt** - Explicit types, proofs required
-2. **FBQL** - Type inference, runtime validation
+1. **GQL-DT** - Explicit types, proofs required
+2. **GQL** - Type inference, runtime validation
 
 **Architecture:**
 ```
@@ -267,8 +267,8 @@ def parseRationale : Parser String := fun s =>
 /-- Dummy schema for type inference -/
 axiom evidenceSchema : Schema
 
-/-- Parse INSERT statement (FBQL - no types) -/
-noncomputable def parseInsertFBQL : Parser InferredInsert := do
+/-- Parse INSERT statement (GQL - no types) -/
+noncomputable def parseInsertGQL : Parser InferredInsert := do
   let _ ← expect .kwInsert
   let _ ← expect .kwInto
   let table ← expectIdentifier
@@ -282,8 +282,8 @@ noncomputable def parseInsertFBQL : Parser InferredInsert := do
   | .ok inferred => return inferred
   | .error msg => fail msg
 
-/-- Parse INSERT statement (FBQLdt - explicit types) -/
-noncomputable def parseInsertFBQLdt : Parser InferredInsert := do
+/-- Parse INSERT statement (GQL-DT - explicit types) -/
+noncomputable def parseInsertGQLdt : Parser InferredInsert := do
   let _ ← expect .kwInsert
   let _ ← expect .kwInto
   let table ← expectIdentifier
@@ -332,8 +332,8 @@ structure ParsedSelect where
 
 /-- Statement type for parsing -/
 inductive Statement where
-  | insertFBQL : InferredInsert → Statement
-  | insertFBQLdt : InferredInsert → Statement
+  | insertGQL : InferredInsert → Statement
+  | insertGQLdt : InferredInsert → Statement
   | select : ParsedSelect → Statement
   | update : ParsedUpdate → Statement
   | delete : ParsedDelete → Statement
@@ -521,7 +521,7 @@ noncomputable unsafe def parse (source : String) : Except String (List Statement
 --   let stmts ← parse source
 --
 --   match stmts.head? with
---   | some (.insertFBQL inferred) =>
+--   | some (.insertGQL inferred) =>
 --       -- Convert InferredInsert to IR.Insert
 --       -- TODO: Complete this conversion (needs schema)
 --       .error "InferredInsert → IR conversion not yet implemented"

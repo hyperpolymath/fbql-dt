@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: PMPL-1.0-or-later
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
--- Type Inference for FBQL (User Tier)
+-- Type Inference for GQL (User Tier)
 -- Infers dependent types from simple SQL-like syntax
 
 import FbqlDt.AST
@@ -13,9 +13,9 @@ namespace FbqlDt.TypeInference
 open AST Types TypeSafe
 
 /-!
-# Type Inference for FBQL
+# Type Inference for GQL
 
-The FBQL parser allows users to write simple SQL-like queries without
+The GQL parser allows users to write simple SQL-like queries without
 explicit type annotations. The type inference engine:
 
 1. Infers dependent types from literals and expressions
@@ -25,12 +25,12 @@ explicit type annotations. The type inference engine:
 
 **Example:**
 ```sql
--- FBQL (user writes)
+-- GQL (user writes)
 INSERT INTO evidence (title, prompt_provenance)
 VALUES ('ONS Data', 95)
 RATIONALE 'Official statistics';
 
--- Inferred to (FBQLdt internal)
+-- Inferred to (GQL-DT internal)
 INSERT INTO evidence (
   title : NonEmptyString,
   prompt_provenance : BoundedNat 0 100
@@ -299,7 +299,7 @@ def exampleInferInvalid : Except String InferredInsert :=
 -- Integration with Parser
 -- ============================================================================
 
-/-- Parse FBQL literal to InferredType -/
+/-- Parse GQL literal to InferredType -/
 def parseLiteral (literal : String) : Except String InferredType :=
   -- Try to parse as number
   if let some n := literal.toNat? then
@@ -316,8 +316,8 @@ def parseLiteral (literal : String) : Except String InferredType :=
   else
     .error s!"Cannot parse literal: {literal}"
 
-/-- Parse FBQL INSERT and perform type inference -/
-def parseFBQLInsert
+/-- Parse GQL INSERT and perform type inference -/
+def parseGQLInsert
   (schema : Schema)
   (query : String)
   : Except String InferredInsert := do

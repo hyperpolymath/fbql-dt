@@ -1,4 +1,4 @@
-# Type Safety Enforcement in FBQLdt Parser
+# Type Safety Enforcement in GQL-DT Parser
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -10,7 +10,7 @@
 
 ## How the Parser Enforces Type Safety
 
-The FBQLdt parser uses **Lean 4's dependent type system** to enforce type safety at **construction time**, not runtime.
+The GQL-DT parser uses **Lean 4's dependent type system** to enforce type safety at **construction time**, not runtime.
 
 ### Key Principle: "If it compiles, it's correct"
 
@@ -103,7 +103,7 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 -- Runtime error: check constraint violated
 ```
 
-**FBQLdt (Advanced Tier):**
+**GQL-DT (Advanced Tier):**
 ```lean
 INSERT INTO evidence (
   prompt_provenance : BoundedNat 0 100
@@ -114,7 +114,7 @@ INSERT INTO evidence (
 -- Cannot prove: 150 ≤ 100
 ```
 
-**FBQL (User Tier):**
+**GQL (User Tier):**
 ```sql
 INSERT INTO evidence (prompt_provenance) VALUES (150);
 -- Type inference: 150 : Nat
@@ -135,7 +135,7 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 // User can't even enter 150!
 ```
 
-**Level 2: Type Inference (FBQL Parser)**
+**Level 2: Type Inference (GQL Parser)**
 ```
 User input: 150
   ↓
@@ -148,7 +148,7 @@ Runtime check: 150 > 100? YES
 ERROR before database touched
 ```
 
-**Level 3: Proof Verification (FBQLdt Parser)**
+**Level 3: Proof Verification (GQL-DT Parser)**
 ```
 User input: BoundedNat.mk 0 100 150 proof
   ↓
@@ -182,8 +182,8 @@ Transaction rolled back
 -- Define permission levels
 inductive ValidationLevel where
   | none : ValidationLevel       -- No validation (dangerous!)
-  | runtime : ValidationLevel    -- Runtime checks only (FBQL)
-  | compile : ValidationLevel    -- Compile-time proofs (FBQLdt)
+  | runtime : ValidationLevel    -- Runtime checks only (GQL)
+  | compile : ValidationLevel    -- Compile-time proofs (GQL-DT)
   | paranoid : ValidationLevel   -- Manual proofs required
 
 -- Schema with per-role validation
@@ -196,25 +196,25 @@ structure PermissionedSchema extends Schema where
 ### Access Control at Type Level
 
 ```lean
--- Users can only INSERT via runtime-checked FBQL
+-- Users can only INSERT via runtime-checked GQL
 def userInsert (user : User) (value : Nat) : IO Unit := do
   -- Runtime validation
   if value < 0 || value > 100 then
     IO.println "Error: Value out of bounds"
   else
     -- Generate runtime-checked query
-    executeFBQL s!"INSERT INTO evidence (score) VALUES ({value})"
+    executeGQL s!"INSERT INTO evidence (score) VALUES ({value})"
 
--- Admins can INSERT via compile-time FBQLdt
+-- Admins can INSERT via compile-time GQL-DT
 def adminInsert (admin : Admin) (value : BoundedNat 0 100) : IO Unit := do
   -- Compile-time validation (already done!)
-  executeFBQLdt (insertWithScore value)
+  executeGQL-DT (insertWithScore value)
   -- No runtime check needed - type system guarantees correctness
 
 -- Advanced users must provide manual proofs
 def advancedInsert (advanced : Advanced) (value : Nat) (proof : 0 ≤ value ∧ value ≤ 100) : IO Unit := do
   let score := BoundedNat.mk 0 100 value (proof.1) (proof.2)
-  executeFBQLdt (insertWithScore score)
+  executeGQL-DT (insertWithScore score)
   -- Manual proof required - no auto-tactics allowed
 ```
 
@@ -222,7 +222,7 @@ def advancedInsert (advanced : Advanced) (value : Nat) (proof : 0 ≤ value ∧ 
 
 ## 5. Gradual Typing: Best of Both Worlds
 
-### Tier 1: User (FBQL) - Type Inference
+### Tier 1: User (GQL) - Type Inference
 
 ```sql
 -- User writes simple SQL
@@ -237,7 +237,7 @@ RATIONALE 'Based on data';
 3. Generate proofs: `by decide`, `by omega`
 4. Validate at runtime if proof fails
 
-### Tier 2: Admin (FBQLdt) - Explicit Types
+### Tier 2: Admin (GQL-DT) - Explicit Types
 
 ```lean
 -- Admin writes with types
@@ -281,9 +281,9 @@ Admin manually fixes data
 Admin wastes time
 ```
 
-**FBQLdt approach (GOOD):**
+**GQL-DT approach (GOOD):**
 ```
-User enters bad data via FBQL
+User enters bad data via GQL
   ↓
 Type inference + validation
   ↓
@@ -303,8 +303,8 @@ Admin never sees the mistake
 ```lean
 -- Transaction validation hook
 def validateTransaction (query : String) (user : User) : IO (Except String Unit) := do
-  -- Parse as FBQL (user tier)
-  let ast ← parseFBQL query
+  -- Parse as GQL (user tier)
+  let ast ← parseGQL query
 
   -- Infer types
   let typed ← inferTypes ast
@@ -357,14 +357,14 @@ theorem wellTyped_no_runtime_errors
 
 ### What This Means in Practice
 
-**FBQLdt queries (compile-time checked):**
+**GQL-DT queries (compile-time checked):**
 - ✅ Can't insert out-of-bounds values
 - ✅ Can't create empty strings where non-empty required
 - ✅ Can't forget rationale
 - ✅ Can't violate foreign keys (with proper schema)
 - ✅ Can't break normal forms (if TARGET_NORMAL_FORM set)
 
-**FBQL queries (runtime checked):**
+**GQL queries (runtime checked):**
 - ✅ Can't insert out-of-bounds values (rejected before commit)
 - ✅ Can't create empty strings (validation before commit)
 - ✅ Can't forget rationale (parser enforces)
@@ -387,7 +387,7 @@ theorem wellTyped_no_runtime_errors
 ### 🔧 Next Steps
 
 - [ ] Parser implementation (parse text → typed AST)
-- [ ] Type inference algorithm (FBQL → FBQLdt)
+- [ ] Type inference algorithm (GQL → GQL-DT)
 - [ ] Auto-proof tactics (omega, decide, simp)
 - [ ] Runtime validation fallback
 - [ ] Permission system integration
@@ -401,8 +401,8 @@ theorem wellTyped_no_runtime_errors
 **A: Four-layer defense:**
 
 1. **UI layer** - Lithoglyph Studio uses forms/dropdowns (users can't type invalid values)
-2. **FBQL layer** - Type inference + runtime validation (errors before commit)
-3. **FBQLdt layer** - Compile-time proofs (queries won't even run if invalid)
+2. **GQL layer** - Type inference + runtime validation (errors before commit)
+3. **GQL-DT layer** - Compile-time proofs (queries won't even run if invalid)
 4. **Database layer** - Final constraint checks (safety net)
 
 **Result:** Invalid data **never reaches the database**. Admins never see user mistakes.
@@ -418,8 +418,8 @@ theorem wellTyped_no_runtime_errors
 - Easier to build together than retrofit
 
 **What to implement in M6:**
-- M6a: FBQLdt parser (explicit types)
-- M6b: FBQL parser (type inference)
+- M6a: GQL-DT parser (explicit types)
+- M6b: GQL parser (type inference)
 - M6c: Unified type checker (validates both)
 
 ---
@@ -484,8 +484,8 @@ insertEvidence title scores
 5. **Theorem proving** - Lean 4 verifies all proofs automatically
 
 **Result:**
-- ❌ Invalid queries don't compile (FBQLdt tier)
-- ❌ Invalid queries don't commit (FBQL tier)
+- ❌ Invalid queries don't compile (GQL-DT tier)
+- ❌ Invalid queries don't commit (GQL tier)
 - ✅ Admins never fix user type errors
 - ✅ Database always contains valid data
 

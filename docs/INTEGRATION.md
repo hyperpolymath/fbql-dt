@@ -1,4 +1,4 @@
-# FBQLdt Integration: ReScript, WASM, ABI, FFI
+# GQL-DT Integration: ReScript, WASM, ABI, FFI
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -17,7 +17,7 @@
 
 **Architecture:**
 ```
-FBQLdt (Lean 4)
+GQL-DT (Lean 4)
     ↓
 Typed IR (CBOR)
     ↓
@@ -116,7 +116,7 @@ Browser/Deno/Cloudflare Workers
 
 **Alternative (Preferred): Zig WASM**
 ```
-FBQLdt Parser (Lean 4)
+GQL-DT Parser (Lean 4)
     ↓
 Typed IR (CBOR)
     ↓
@@ -158,7 +158,7 @@ pub fn build(b: *std.Build) void {
 **WASM Features:**
 - ✅ Type checking in browser
 - ✅ Query validation before server round-trip
-- ✅ Proof verification client-side (for FBQLdt tier)
+- ✅ Proof verification client-side (for GQL-DT tier)
 - ✅ Offline Lithoglyph Studio (IndexedDB storage)
 - ✅ Edge computing (Cloudflare Workers, Deno Deploy)
 
@@ -278,8 +278,8 @@ backwardCompatible = ?proof_backward_compat
 // generated/abi/gqldt.h
 // Auto-generated from src/abi/Types.idr - DO NOT EDIT
 
-#ifndef FBQLDT_ABI_H
-#define FBQLDT_ABI_H
+#ifndef GQLDT_ABI_H
+#define GQLDT_ABI_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -311,7 +311,7 @@ typedef struct FbqlDt_InsertStmt {
 _Static_assert(sizeof(FbqlDt_InsertStmt) == 40, "InsertStmt size");
 _Static_assert(_Alignof(FbqlDt_InsertStmt) == 8, "InsertStmt alignment");
 
-#endif // FBQLDT_ABI_H
+#endif // GQLDT_ABI_H
 ```
 
 **Benefits of Idris2 ABI:**
@@ -471,7 +471,7 @@ zig build -Dtarget=wasm32-wasi
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ FBQLdt/FBQL Source (User Input)                         │
+│ GQL-DT/GQL Source (User Input)                         │
 └────────────────────┬────────────────────────────────────┘
                      ↓
 ┌─────────────────────────────────────────────────────────┐
@@ -582,6 +582,6 @@ zig build -Dtarget=wasm32-wasi
 
 **See Also:**
 - `docs/EXECUTION-STRATEGY.md` - Why native IR execution
-- `docs/TWO-TIER-DESIGN.md` - FBQLdt vs FBQL architecture
+- `docs/TWO-TIER-DESIGN.md` - GQL-DT vs GQL architecture
 - `~/abi-migration-guide.md` - ABI/FFI universal standard (per CLAUDE.md)
 - `~/Documents/hyperpolymath-repos/rsr-template-repo/ABI-FFI-README.md` - Template

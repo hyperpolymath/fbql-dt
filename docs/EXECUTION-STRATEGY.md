@@ -1,4 +1,4 @@
-# FBQLdt Execution Strategy: SQL vs IR vs Native
+# GQL-DT Execution Strategy: SQL vs IR vs Native
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -11,11 +11,11 @@
 
 ## The Question
 
-**"Does it make sense to compile FBQL-DT to SQL or a lower-level IR for execution?"**
+**"Does it make sense to compile GQL-DT to SQL or a lower-level IR for execution?"**
 
 **Your intuition:** Compiling to SQL feels like "being a purist" but might sacrifice compatibility.
 
-**TL;DR Answer:** Your intuition is **100% correct**. Compiling to SQL **destroys the type safety guarantees** that make FBQLdt valuable. **Recommendation: Compile to typed IR, execute natively on Lithoglyph, with optional SQL backend for compatibility.**
+**TL;DR Answer:** Your intuition is **100% correct**. Compiling to SQL **destroys the type safety guarantees** that make GQL-DT valuable. **Recommendation: Compile to typed IR, execute natively on Lithoglyph, with optional SQL backend for compatibility.**
 
 ---
 
@@ -24,7 +24,7 @@
 ### What It Looks Like
 
 ```lean
--- FBQLdt query
+-- GQL-DT query
 INSERT INTO evidence (
   title : NonEmptyString,
   prompt_provenance : BoundedNat 0 100
@@ -55,11 +55,11 @@ VALUES ('ONS Data', 95);
 | **No Dependent Types** | `PromptScores` flattened to 7 separate columns - overall auto-computation lost |
 | **Provenance Tracking Weakened** | `Tracked α` becomes regular columns - no type-level guarantees |
 | **Runtime-Only Checks** | SQL CHECK constraints run at INSERT, not at query construction |
-| **Error Messages Poor** | SQL errors like "CHECK constraint violated" instead of helpful FBQLdt messages |
+| **Error Messages Poor** | SQL errors like "CHECK constraint violated" instead of helpful GQL-DT messages |
 
 ### Example: Information Loss
 
-**FBQLdt (Compile-Time Proof):**
+**GQL-DT (Compile-Time Proof):**
 ```lean
 -- This DOESN'T COMPILE - caught at development time
 def invalid : BoundedNat 0 100 := ⟨150, by omega, by omega⟩
@@ -74,13 +74,13 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 -- DETAIL: Failing row contains (150)
 ```
 
-**Loss:** User finds out about error when running query, not when writing it. Defeats the entire purpose of FBQLdt.
+**Loss:** User finds out about error when running query, not when writing it. Defeats the entire purpose of GQL-DT.
 
 ### When SQL Compilation Makes Sense
 
 **Compatibility Layer Only:**
-- FBQL (user tier) → SQL for broad tool compatibility
-- FBQLdt proofs already verified → SQL as "dumb transport"
+- GQL (user tier) → SQL for broad tool compatibility
+- GQL-DT proofs already verified → SQL as "dumb transport"
 - Read-only queries where type safety less critical
 - Integration with existing SQL tools (BI dashboards, reporting)
 
@@ -96,7 +96,7 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 ### What It Looks Like
 
 ```lean
--- FBQLdt query (same as above)
+-- GQL-DT query (same as above)
 INSERT INTO evidence ...
 
 -- Compiled to Typed IR (preserves ALL type information)
@@ -123,7 +123,7 @@ IR.Insert {
 ### IR Design: Typed Intermediate Representation
 
 ```lean
--- Core IR for FBQLdt execution
+-- Core IR for GQL-DT execution
 inductive IR where
   | insert : {schema : Schema} → InsertStmt schema → IR
   | select : {α : Type} → SelectStmt α → IR
@@ -159,13 +159,13 @@ structure IR.InsertStmt (schema : Schema) where
 | **Multiple Backends** | IR → Lithoglyph (native), IR → SQL (compat), IR → Debug |
 | **Optimization** | IR can be optimized before execution |
 | **Security** | Type-safe IR prevents SQL injection entirely |
-| **Error Messages** | IR execution can reference original FBQLdt source |
+| **Error Messages** | IR execution can reference original GQL-DT source |
 | **Proof Caching** | Verified proofs cached in IR, no re-verification |
 
 ### IR Execution Flow
 
 ```
-FBQLdt/FBQL Source
+GQL-DT/GQL Source
       ↓
    Parser
       ↓
@@ -190,7 +190,7 @@ Lithoglyph   Backend
 ### Architecture
 
 ```
-FBQLdt/FBQL
+GQL-DT/GQL
     ↓
 Lean 4 Parser (this repo)
     ↓
@@ -228,7 +228,7 @@ Lithoglyph Server (Rust/Zig)
 - No string concatenation vulnerabilities
 
 **4. Error Quality**
-- Errors reference original FBQLdt source
+- Errors reference original GQL-DT source
 - Type mismatch errors show expected vs actual types
 - Proof failure errors show which tactic failed
 
@@ -278,7 +278,7 @@ const Collection = struct {
 ### Architecture
 
 ```
-FBQLdt/FBQL
+GQL-DT/GQL
     ↓
 Lean 4 Parser
     ↓
@@ -301,9 +301,9 @@ Typed IR (canonical representation)
 -- IR can target multiple backends
 def executeIR (ir : IR) (backend : Backend) : IO Result :=
   match backend with
-  | .native formdb =>
+  | .native lithoglyph =>
       -- Best: Native Lithoglyph execution
-      formdb.execute ir
+      lithoglyph.execute ir
   | .sql connection =>
       -- Compatibility: Lower to SQL
       let sql := lowerToSQL ir  -- Loses type info
@@ -331,9 +331,9 @@ def executeIR (ir : IR) (backend : Backend) : IO Result :=
 
 | Approach | Parse | Type Check | Execute | Total | Type Safety |
 |----------|-------|------------|---------|-------|-------------|
-| **FBQLdt → IR → Lithoglyph** | 50ms | 20ms | 100ms | **170ms** | ✅ Full |
-| **FBQLdt → SQL → DB** | 50ms | 20ms | 200ms (parse SQL) | **270ms** | ❌ Lost |
-| **FBQL → IR → Lithoglyph** | 30ms | 10ms (infer) | 100ms | **140ms** | ✅ Runtime |
+| **GQL-DT → IR → Lithoglyph** | 50ms | 20ms | 100ms | **170ms** | ✅ Full |
+| **GQL-DT → SQL → DB** | 50ms | 20ms | 200ms (parse SQL) | **270ms** | ❌ Lost |
+| **GQL → IR → Lithoglyph** | 30ms | 10ms (infer) | 100ms | **140ms** | ✅ Runtime |
 | **Raw SQL → DB** | 10ms | 0ms | 200ms | **210ms** | ❌ None |
 
 **Key Insight:** Native IR execution is **faster** than SQL compilation because:
@@ -417,11 +417,11 @@ def insert (score : BoundedNat 0 100) : IO Unit :=
 
 ## Implementation Plan (M6)
 
-### M6a: FBQLdt Parser → Typed IR
+### M6a: GQL-DT Parser → Typed IR
 
 ```lean
 -- Parser outputs typed IR
-def parseFBQLdt (source : String) : IO (Except ParseError IR) := do
+def parseGQL-DT (source : String) : IO (Except ParseError IR) := do
   let tokens ← lexer.tokenize source
   let ast ← parser.parse tokens
   let checked ← typeChecker.check ast
@@ -442,16 +442,16 @@ def generateIR (ast : TypedAST) : IO IR :=
       }
 ```
 
-### M6b: FBQL Parser → Typed IR (via inference)
+### M6b: GQL Parser → Typed IR (via inference)
 
 ```lean
--- FBQL infers types, generates same IR
-def parseFBQL (source : String) : IO (Except ParseError IR) := do
+-- GQL infers types, generates same IR
+def parseGQL (source : String) : IO (Except ParseError IR) := do
   let tokens ← lexer.tokenize source
   let ast ← parser.parse tokens
   let inferred ← inferTypes ast         -- NEW: Type inference
   let checked ← typeChecker.check inferred
-  let ir ← generateIR checked           -- SAME IR as FBQLdt!
+  let ir ← generateIR checked           -- SAME IR as GQL-DT!
   return ir
 ```
 
@@ -529,6 +529,6 @@ fn insert(db: *Database, stmt: IR.InsertStmt) !void {
 
 **See Also:**
 - `docs/PARSER-DECISION.md` - Why Lean 4 for parsing
-- `docs/TWO-TIER-DESIGN.md` - FBQLdt vs FBQL architecture
+- `docs/TWO-TIER-DESIGN.md` - GQL-DT vs GQL architecture
 - `docs/TYPE-SAFETY-ENFORCEMENT.md` - How type safety works
 - Lithoglyph Zig FFI: `bridge/zig/src/main.zig`

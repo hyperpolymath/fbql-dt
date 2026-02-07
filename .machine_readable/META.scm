@@ -31,9 +31,9 @@
     (adr-002
       (status accepted)
       (date "2025-01-11")
-      (title "Zig for FFI bridge to FormDB")
+      (title "Zig for FFI bridge to Lithoglyph")
       (context
-        "FormDB core is written in Forth. Need FFI to Lean 4. "
+        "Lithoglyph core is written in Forth. Need FFI to Lean 4. "
         "Options: C headers, Zig, Rust.")
       (decision
         "Use Zig for Form.Bridge with callconv(.C) for interop.")
@@ -50,12 +50,12 @@
     (adr-003
       (status accepted)
       (date "2025-01-11")
-      (title "Backward compatibility with standard FQL")
+      (title "Backward compatibility with standard GQL")
       (context
-        "Existing FQL code should continue to work. "
+        "Existing GQL code should continue to work. "
         "Question: require explicit opt-in or default to dependent types?")
       (decision
-        "Standard FQL is valid in dependent-type mode. Types are inferred. "
+        "Standard GQL is valid in dependent-type mode. Types are inferred. "
         "Explicit WITH DEPENDENT_TYPES for new type features.")
       (consequences
         (positive
@@ -111,7 +111,7 @@
     (testing
       (unit "Lean 4 #check and example for type checking")
       (property "QuickCheck-style testing via Plausible")
-      (integration "End-to-end FQL string to Forth operation"))
+      (integration "End-to-end GQL string to Forth operation"))
 
     (versioning
       (scheme "SemVer")
@@ -135,7 +135,7 @@
       "PROMPT scores in [0,100] should be enforced by the type system, not runtime checks.")
 
     (why-provenance-in-types
-      "FormDB's core value is provenance tracking. "
+      "Lithoglyph's core value is provenance tracking. "
       "If provenance is optional, it will be skipped. "
       "Type-level enforcement makes provenance non-negotiable.")
 

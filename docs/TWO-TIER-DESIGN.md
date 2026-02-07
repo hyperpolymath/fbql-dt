@@ -1,4 +1,4 @@
-# FBQLdt Two-Tier Language Design
+# GQL-DT Two-Tier Language Design
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -10,13 +10,13 @@
 
 ## The Problem: Two User Populations
 
-### Population 1: Developers & Advanced Admins (FBQLdt)
+### Population 1: Developers & Advanced Admins (GQL-DT)
 - **Who:** Formal methods experts, security auditors, senior database admins
 - **Needs:** Full type safety, proof obligations, compile-time verification
 - **Willing to:** Write proofs, understand dependent types, debug type errors
 - **Use case:** Extreme secure audit projects, critical data entry
 
-### Population 2: Regular Users & Junior Admins (FBQL)
+### Population 2: Regular Users & Junior Admins (GQL)
 - **Who:** Journalists, researchers, junior staff
 - **Needs:** Simple syntax, runtime checks, helpful error messages
 - **Can't:** Write Lean 4 proofs, understand type theory
@@ -28,7 +28,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  FBQLdt (Type-Safe Tier)                                    │
+│  GQL-DT (Type-Safe Tier)                                    │
 │  - Full dependent types                                      │
 │  - Compile-time proofs required                              │
 │  - Used by: Developers, advanced admins                      │
@@ -38,7 +38,7 @@
                        ├─ Compiles to ──→
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
-│  FBQL (Runtime-Checked Tier)                                │
+│  GQL (Runtime-Checked Tier)                                │
 │  - Familiar SQL-like syntax                                  │
 │  - Runtime constraint checks                                 │
 │  - Used by: Regular users, junior admins                     │
@@ -57,12 +57,12 @@
 
 ---
 
-## Tier 1: FBQLdt (Developer/Admin)
+## Tier 1: GQL-DT (Developer/Admin)
 
 ### Syntax: Explicit Types & Proofs
 
 ```lean
--- FBQLdt: Full type annotations
+-- GQL-DT: Full type annotations
 INSERT INTO evidence (
   title : NonEmptyString,
   prompt_provenance : BoundedNat 0 100
@@ -73,8 +73,8 @@ VALUES (
 )
 RATIONALE "Official statistics"
 WITH_PROOF {
-  scores_in_bounds: by formdb_prompt,
-  provenance_tracked: by formdb_prov
+  scores_in_bounds: by lithoglyph_prompt,
+  provenance_tracked: by lithoglyph_prov
 };
 ```
 
@@ -93,12 +93,12 @@ WITH_PROOF {
 
 ---
 
-## Tier 2: FBQL (Regular User)
+## Tier 2: GQL (Regular User)
 
 ### Syntax: Familiar SQL-Style
 
 ```sql
--- FBQL: Inferred types, runtime checks
+-- GQL: Inferred types, runtime checks
 INSERT INTO evidence (title, prompt_provenance)
 VALUES ('ONS Data', 95)
 RATIONALE 'Official statistics';
@@ -126,16 +126,16 @@ RATIONALE 'Official statistics';
 
 ## How They Interact: Compilation Strategy
 
-### FBQL → FBQLdt → Lithoglyph
+### GQL → GQL-DT → Lithoglyph
 
 ```
-User writes FBQL
+User writes GQL
       ↓
 Type Inference (auto-generate types)
       ↓
 Proof Generation (auto-generate proofs or admit)
       ↓
-FBQLdt AST (with types & proofs)
+GQL-DT AST (with types & proofs)
       ↓
 Type Checking (validate proofs)
       ↓
@@ -145,14 +145,14 @@ Type Checking (validate proofs)
 Execute   Error (with fix suggestion)
 ```
 
-### Example: FBQL → FBQLdt Translation
+### Example: GQL → GQL-DT Translation
 
-**Input (FBQL):**
+**Input (GQL):**
 ```sql
 INSERT INTO evidence (prompt_provenance) VALUES (95);
 ```
 
-**Translated to (FBQLdt):**
+**Translated to (GQL-DT):**
 ```lean
 INSERT INTO evidence (
   prompt_provenance : BoundedNat 0 100
@@ -224,9 +224,9 @@ CREATE COLLECTION evidence (
 ```
 
 **Access levels:**
-- `runtime`: FBQL with type inference + runtime checks
-- `compile_time`: FBQLdt with proofs auto-generated where possible
-- `proof_required`: FBQLdt with manual proofs required (no auto-admit)
+- `runtime`: GQL with type inference + runtime checks
+- `compile_time`: GQL-DT with proofs auto-generated where possible
+- `proof_required`: GQL-DT with manual proofs required (no auto-admit)
 
 ### Solution 3: Admin Review Queue
 
@@ -269,7 +269,7 @@ function submitEvidence(form: EvidenceForm) {
     return
   }
 
-  // Generate type-safe FBQL
+  // Generate type-safe GQL
   const query = `
     INSERT INTO evidence (title, prompt_provenance)
     VALUES ('${form.title}', ${form.promptProvenance})
@@ -277,14 +277,14 @@ function submitEvidence(form: EvidenceForm) {
   `
 
   // Submit (will be validated again server-side)
-  await formdb.execute(query)
+  await lithoglyph.execute(query)
 }
 ```
 
 **Benefits:**
 - ✅ Users never write raw SQL
 - ✅ UI enforces constraints (dropdowns, sliders, validation)
-- ✅ Type-safe generation of FBQL
+- ✅ Type-safe generation of GQL
 - ✅ Admins don't see malformed queries
 
 ### Solution 5: Gradual Validation Levels
@@ -312,13 +312,13 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 
 ## When to Use Each Tier
 
-### Use FBQLdt (Type-Safe) When:
+### Use GQL-DT (Type-Safe) When:
 1. **Defining schemas** - Admins create collections with type constraints
 2. **Critical data entry** - Security auditors entering sensitive evidence
 3. **Normalization operations** - Database transformations need proofs
 4. **Integration code** - Programmatic access from applications
 
-### Use FBQL (Runtime-Checked) When:
+### Use GQL (Runtime-Checked) When:
 1. **Routine queries** - Day-to-day SELECT operations
 2. **User data entry** - Journalists adding evidence
 3. **Exploratory analysis** - Researchers querying data
@@ -328,13 +328,13 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 
 ## Implementation Timeline
 
-### Phase 1: FBQLdt Only (Current)
+### Phase 1: GQL-DT Only (Current)
 - ✅ Milestone 1-4: Core types implemented
 - 🔧 Milestone 5-6: Parser + type checker
 
-**Status:** Advanced users can use FBQLdt now
+**Status:** Advanced users can use GQL-DT now
 
-### Phase 2: FBQL with Type Inference (Next)
+### Phase 2: GQL with Type Inference (Next)
 - [ ] Type inference engine
 - [ ] Auto-proof generation (omega, decide tactics)
 - [ ] Runtime validation layer
@@ -365,7 +365,7 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 ### ✅ Deal with NOW (During Parser Implementation)
 
 1. **Design AST to support both tiers**
-   - Explicit types (FBQLdt) vs inferred types (FBQL)
+   - Explicit types (GQL-DT) vs inferred types (GQL)
    - Proof annotations optional
    - Same AST, different parsing paths
 
@@ -377,11 +377,11 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 3. **Define validation levels**
    - Schema metadata: which tier is allowed
    - User roles: which validation level they get
-   - Default: FBQL for users, FBQLdt for admins
+   - Default: GQL for users, GQL-DT for admins
 
 ### ⏳ Deal with LATER (After M6)
 
-1. **Actual FBQL parser**
+1. **Actual GQL parser**
    - SQL-like syntax parser
    - Type inference algorithm
    - Auto-proof tactics
@@ -400,7 +400,7 @@ INSERT INTO evidence (prompt_provenance) VALUES (150);
 
 ## Example: Dual-Tier in Practice
 
-### Schema Definition (Admin, FBQLdt)
+### Schema Definition (Admin, GQL-DT)
 
 ```lean
 CREATE COLLECTION evidence (
@@ -417,7 +417,7 @@ CREATE COLLECTION evidence (
   );
 ```
 
-### User Insert (FBQL, Type-Inferred)
+### User Insert (GQL, Type-Inferred)
 
 ```sql
 -- User writes simple SQL
@@ -439,7 +439,7 @@ RATIONALE 'Official statistics';
 -- Executes immediately if all proofs pass
 ```
 
-### Admin Insert (FBQLdt, Explicit Types)
+### Admin Insert (GQL-DT, Explicit Types)
 
 ```lean
 -- Admin writes full type annotations
@@ -459,8 +459,8 @@ VALUES (
 )
 RATIONALE "Official UK government statistics"
 WITH_PROOF {
-  all_scores_valid: by formdb_prompt,
-  overall_computed: by formdb_prompt
+  all_scores_valid: by lithoglyph_prompt,
+  overall_computed: by lithoglyph_prompt
 };
 
 -- Compile-time type checking ensures correctness
@@ -480,12 +480,12 @@ WITH_PROOF {
 
 **What to implement:**
 
-### M6a: FBQLdt Parser (Full Types)
+### M6a: GQL-DT Parser (Full Types)
 - Parse explicit type annotations
 - Parse proof obligations
 - Generate typed AST
 
-### M6b: FBQL Parser (Type Inference)
+### M6b: GQL Parser (Type Inference)
 - Parse SQL-like syntax
 - Infer types from values
 - Auto-generate proofs where possible
@@ -502,7 +502,7 @@ WITH_PROOF {
 
 ### Two Tiers
 
-| Feature | FBQLdt (Advanced) | FBQL (Users) |
+| Feature | GQL-DT (Advanced) | GQL (Users) |
 |---------|-------------------|--------------|
 | **Syntax** | Lean 4-style | SQL-style |
 | **Types** | Explicit | Inferred |
@@ -567,7 +567,7 @@ def journalistPermissions : PermissionProfile := {
     allowDependentTypes := false, -- No PromptScores
     allowProofTypes := false      -- No custom proofs
   },
-  validationLevel := .runtime,    -- FBQL only
+  validationLevel := .runtime,    -- GQL only
   canCreateSchema := false,
   canModifySchema := false,
   canDeleteData := false
@@ -583,7 +583,7 @@ def adminPermissions : PermissionProfile := {
     allowDependentTypes := true,
     allowProofTypes := true
   },
-  validationLevel := .compile,    -- FBQLdt allowed
+  validationLevel := .compile,    -- GQL-DT allowed
   canCreateSchema := true,
   canModifySchema := true,
   canDeleteData := true
@@ -600,11 +600,11 @@ def parseWithPermissions
   (profile : PermissionProfile)
   : IO (Except String (InsertStmt schema)) := do
 
-  -- 1. Parse query (FBQL or FBQLdt based on validationLevel)
+  -- 1. Parse query (GQL or GQL-DT based on validationLevel)
   let ast ← if profile.validationLevel == .runtime then
-    parseFBQL query
+    parseGQL query
   else
-    parseFBQLdt query
+    parseGQL-DT query
 
   -- 2. Extract types used in query
   let usedTypes := ast.values.map (·.1)
@@ -666,9 +666,9 @@ CREATE COLLECTION simple_data (
 ```
 
 **Result:**
-- Journalists: Simple FBQL, basic types only, can't mess up type system
-- Editors: FBQL with some refined types, still runtime-checked
-- Tech admins: Full FBQLdt, compile-time verification
+- Journalists: Simple GQL, basic types only, can't mess up type system
+- Editors: GQL with some refined types, still runtime-checked
+- Tech admins: Full GQL-DT, compile-time verification
 
 #### Example 2: Security Audit Firm
 
@@ -788,8 +788,8 @@ function renderEvidenceForm(user: User, profile: PermissionProfile) {
 ## Summary: One Language, Layered Access Control
 
 ### Layer 1: Syntax Choice (User Convenience)
-- **FBQL**: SQL-like, type inference, runtime checks
-- **FBQLdt**: Lean-like, explicit types, compile-time proofs
+- **GQL**: SQL-like, type inference, runtime checks
+- **GQL-DT**: Lean-like, explicit types, compile-time proofs
 - **Same language**, different parsers, same AST
 
 ### Layer 2: Type Permissions (Organizational Policy)
@@ -805,13 +805,13 @@ function renderEvidenceForm(user: User, profile: PermissionProfile) {
 - **Paranoid**: Manual proofs required
 
 ### Layer 4: UI Forms (Maximum Safety)
-- **No syntax exposure**: Users never write SQL/FBQLdt
+- **No syntax exposure**: Users never write SQL/GQL-DT
 - **Type-driven forms**: UI generates based on allowed types
 - **Impossible to bypass**: Restricted columns don't appear
 
 ### Answer to "Flexibility" Question
 
-**Q: Can a workplace say "FBQL with numbers, strings, dates BUT NOTHING ELSE"?**
+**Q: Can a workplace say "GQL with numbers, strings, dates BUT NOTHING ELSE"?**
 
 **A: YES, exactly this:**
 
@@ -825,7 +825,7 @@ def workplacePolicy : PermissionProfile := {
     allowDependentTypes := false, -- No PromptScores
     allowProofTypes := false     -- No proofs
   },
-  validationLevel := .runtime,   -- FBQL only
+  validationLevel := .runtime,   -- GQL only
   canCreateSchema := false,
   canModifySchema := false,
   canDeleteData := false
@@ -835,8 +835,8 @@ def workplacePolicy : PermissionProfile := {
 **Result:**
 - ✅ Can use: Nat, String, Date
 - ❌ Cannot use: BoundedNat, NonEmptyString, PromptScores, custom types
-- ✅ Syntax: Simple SQL (FBQL)
-- ❌ Cannot access: FBQLdt syntax, proof obligations, dependent types
+- ✅ Syntax: Simple SQL (GQL)
+- ❌ Cannot access: GQL-DT syntax, proof obligations, dependent types
 - ✅ Queries: Runtime-checked, helpful error messages
 - ❌ Cannot break: Type system (restricted types can't violate invariants)
 
@@ -848,8 +848,8 @@ def workplacePolicy : PermissionProfile := {
 
 **Next Steps:**
 1. Design AST to support both tiers
-2. Implement FBQLdt parser (explicit types)
-3. Implement FBQL parser (type inference)
+2. Implement GQL-DT parser (explicit types)
+3. Implement GQL parser (type inference)
 4. Implement TypeWhitelist and PermissionProfile
 5. Unified type checker with permission enforcement
 6. Schema-level permission annotations

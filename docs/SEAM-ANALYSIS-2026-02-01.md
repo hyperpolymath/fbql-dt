@@ -1,4 +1,4 @@
-# FBQLdt M6 Parser - Seam Analysis & Fixes
+# GQL-DT M6 Parser - Seam Analysis & Fixes
 
 **Date:** 2026-02-01
 **Analyst:** Seam Analysis Agent
@@ -213,7 +213,7 @@ def fail {α : Type} (msg : String) : Parser α :=
 | 55803 | PromptScores | `map { "provenance": unsigned, ..., "proof": map }` |
 | 55804 | ProofBlob | `map { "type": textString, "data": textString, "verified": bool }` |
 
-**Vendor Range:** 55799-55899 (100 tags reserved for FBQLdt extensions)
+**Vendor Range:** 55799-55899 (100 tags reserved for GQL-DT extensions)
 
 **Documentation:** Added comprehensive docstrings in Serialization/Types.lean
 

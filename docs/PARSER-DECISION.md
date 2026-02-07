@@ -1,4 +1,4 @@
-# FBQLdt Parser Architecture Decision
+# GQL-DT Parser Architecture Decision
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-**Question:** Which parser should FBQLdt use: ANTLR, Tree-sitter, or Idris2/Lean 4-based?
+**Question:** Which parser should GQL-DT use: ANTLR, Tree-sitter, or Idris2/Lean 4-based?
 
 **Answer:** **Lean 4 Parser Combinators** for type checker, **ANTLR** for production tooling
 
@@ -20,7 +20,7 @@
 ## Current State: No Parser Yet
 
 ### What Exists ✅
-- [x] Complete EBNF grammar (`spec/FBQLdt-Grammar.ebnf`)
+- [x] Complete EBNF grammar (`spec/GQL-DT-Grammar.ebnf`)
 - [x] Lexical specification
 - [x] Type system in Lean 4 (refinement + dependent types)
 - [x] Proof tactics and automation
@@ -300,7 +300,7 @@ Type-checked IR + Proofs
 
 ## Recommended Architecture: Hybrid Approach
 
-### For FBQLdt: **Lean 4 Core + ANTLR Tooling**
+### For GQL-DT: **Lean 4 Core + ANTLR Tooling**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -332,27 +332,27 @@ Type-checked IR + Proofs
 **Development (Lean 4):**
 ```bash
 # Developer writes GQL with types
-vim query.fql.lean
+vim query.gql.lean
 
 # Type check with Lean 4 (includes proof search)
-lean4 --check query.fql.lean
+lean4 --check query.gql.lean
 # ✓ All proofs valid
 
 # Generate runtime GQL (proofs erased)
-lean4 --codegen fql query.fql.lean > query.fql
+lean4 --codegen gql query.gql.lean > query.gql
 
 # Execute on Lithoglyph
-formdb execute query.fql
+lithoglyph execute query.gql
 ```
 
 **Production (optional):**
 ```bash
 # Quick syntax check with ANTLR (fast, no proofs)
-gqldt-lint query.fql
+gqldt-lint query.gql
 # ✓ Syntax OK (proofs not checked)
 
 # Full verification with Lean 4 (slow, complete)
-gqldt-verify query.fql
+gqldt-verify query.gql
 # ✓ Type-checked, proofs valid
 ```
 
@@ -421,10 +421,10 @@ def parseGQL : String → Except String TypedAST := ...
 
 ### Phase 2: ANTLR Tooling (Optional)
 
-**File:** `tools/FBQLdt.g4`
+**File:** `tools/GQL-DT.g4`
 
 ```antlr
-grammar FBQLdt;
+grammar GQL-DT;
 
 program : statement* EOF ;
 

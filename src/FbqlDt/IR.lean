@@ -18,7 +18,7 @@ open AST TypeSafe Serialization.Types Provenance
 /-!
 # Typed Intermediate Representation
 
-The IR is the canonical representation of FBQLdt/FBQL queries.
+The IR is the canonical representation of GQL-DT/GQL queries.
 
 **Key Properties:**
 1. Preserves all type information from AST
@@ -29,7 +29,7 @@ The IR is the canonical representation of FBQLdt/FBQL queries.
 
 **Flow:**
 ```
-FBQLdt/FBQL Source
+GQL-DT/GQL Source
     ↓ Parser
 Typed AST (with proofs)
     ↓ IR Generation
@@ -64,8 +64,8 @@ instance : Repr ProofBlob where
 /-- Validation level (from TWO-TIER-DESIGN.md) -/
 inductive ValidationLevel where
   | none : ValidationLevel       -- No validation (dangerous!)
-  | runtime : ValidationLevel    -- Runtime checks only (FBQL)
-  | compile : ValidationLevel    -- Compile-time proofs (FBQLdt)
+  | runtime : ValidationLevel    -- Runtime checks only (GQL)
+  | compile : ValidationLevel    -- Compile-time proofs (GQL-DT)
   | paranoid : ValidationLevel   -- Manual proofs required
   deriving Repr, BEq
 
@@ -153,7 +153,7 @@ structure IR.Normalize (schema : Schema) where
 -- Top-Level IR
 -- ============================================================================
 
-/-- The IR represents any FBQLdt/FBQL statement -/
+/-- The IR represents any GQL-DT/GQL statement -/
 inductive IR where
   | insert : {schema : Schema} → IR.Insert schema → IR
   | select : IR.Select Unit → IR  -- Simplified to use Unit instead of polymorphic type
@@ -182,7 +182,7 @@ def serializeProof (proofType : String) (proofData : String) : ProofBlob :=
     proofType := proofType
   }
 
-/-- Generate IR from typed AST (FBQLdt path) -/
+/-- Generate IR from typed AST (GQL-DT path) -/
 def generateIR_Insert
   {schema : Schema}
   (stmt : InsertStmt schema)

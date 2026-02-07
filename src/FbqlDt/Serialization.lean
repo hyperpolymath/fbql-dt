@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: PMPL-1.0-or-later
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
--- Serialization/Deserialization for FBQLdt Types
+-- Serialization/Deserialization for GQL-DT Types
 -- Converts between dependent types and storage formats (JSON, CBOR, binary)
 
 import FbqlDt.Types
@@ -15,7 +15,7 @@ open Types AST Serialization.Types
 /-!
 # Serialization/Deserialization
 
-Handles conversion between FBQLdt's dependent types and various storage formats:
+Handles conversion between GQL-DT's dependent types and various storage formats:
 
 1. **CBOR (Primary)** - Binary format for proof blobs, IR transport
 2. **JSON** - For ReScript integration, web APIs, debugging

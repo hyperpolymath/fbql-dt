@@ -1,4 +1,4 @@
-# FBQLdt Language Bindings: Multi-Language Support
+# GQL-DT Language Bindings: Multi-Language Support
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -11,12 +11,12 @@
 
 ## Overview
 
-FBQLdt provides language bindings for all **allowed languages** in the hyperpolymath ecosystem (per `CLAUDE.md` language policy).
+GQL-DT provides language bindings for all **allowed languages** in the hyperpolymath ecosystem (per `CLAUDE.md` language policy).
 
 ### Binding Architecture
 
 ```
-FBQLdt Core (Lean 4)
+GQL-DT Core (Lean 4)
     ↓
 Typed IR (CBOR)
     ↓
@@ -677,7 +677,7 @@ module FbqlDt.Types where
 import Data.Word (Word64)
 import GHC.TypeLits (Nat, KnownNat)
 
--- Type-indexed values (similar to FBQLdt!)
+-- Type-indexed values (similar to GQL-DT!)
 data TypedValue :: Type -> Type where
   Nat :: Word64 -> TypedValue Word64
   BoundedNat ::

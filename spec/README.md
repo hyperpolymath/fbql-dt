@@ -1,4 +1,4 @@
-# FBQLdt Specification Suite
+# GQL-DT Specification Suite
 
 **SPDX-License-Identifier:** PMPL-1.0-or-later
 **SPDX-FileCopyrightText:** 2026 Jonathan D.A. Jewell (@hyperpolymath)
@@ -9,7 +9,7 @@
 
 ## Overview
 
-This directory contains the complete formal specification for **FBQLdt** (Lithoglyph Query Language with Dependent Types), including grammar, semantics, examples, and visual diagrams.
+This directory contains the complete formal specification for **GQL-DT** (Lithoglyph Query Language with Dependent Types), including grammar, semantics, examples, and visual diagrams.
 
 ## Specification Documents
 
@@ -19,9 +19,9 @@ This directory contains the complete formal specification for **FBQLdt** (Lithog
 |----------|---------|--------|-------|
 | **GQL_Dependent_Types_Complete_Specification.md** | Type system, semantics, examples | ✅ Complete | 1,337 |
 | **normalization-types.md** | Functional dependencies, normal forms | ✅ Complete | 753 |
-| **FBQLdt-Grammar.ebnf** | Formal EBNF grammar | ✅ Complete | 800+ |
-| **FBQLdt-Lexical.md** | Lexical specification | ✅ Complete | 700+ |
-| **FBQLdt-Railroad-Diagrams.md** | Visual syntax diagrams | ✅ Complete | 600+ |
+| **GQL-DT-Grammar.ebnf** | Formal EBNF grammar | ✅ Complete | 800+ |
+| **GQL-DT-Lexical.md** | Lexical specification | ✅ Complete | 700+ |
+| **GQL-DT-Railroad-Diagrams.md** | Visual syntax diagrams | ✅ Complete | 600+ |
 
 ### 2. Supporting Documentation
 
@@ -35,16 +35,16 @@ This directory contains the complete formal specification for **FBQLdt** (Lithog
 
 ### For Implementers
 
-1. **Start with:** `FBQLdt-Grammar.ebnf` - Complete syntax
-2. **Then read:** `FBQLdt-Lexical.md` - Tokenization rules
+1. **Start with:** `GQL-DT-Grammar.ebnf` - Complete syntax
+2. **Then read:** `GQL-DT-Lexical.md` - Tokenization rules
 3. **Reference:** `GQL_Dependent_Types_Complete_Specification.md` - Type system
-4. **Visual aid:** `FBQLdt-Railroad-Diagrams.md` - Syntax diagrams
+4. **Visual aid:** `GQL-DT-Railroad-Diagrams.md` - Syntax diagrams
 
 ### For Users
 
 1. **Start with:** `GQL_Dependent_Types_Complete_Specification.md` - Examples and usage
 2. **Deep dive:** `normalization-types.md` - Database normalization
-3. **Visual aid:** `FBQLdt-Railroad-Diagrams.md` - See syntax visually
+3. **Visual aid:** `GQL-DT-Railroad-Diagrams.md` - See syntax visually
 4. **Research:** `../docs/WP06_Dependently_Typed_Lithoglyph.md` - Motivation and theory
 
 ### For Researchers
@@ -95,13 +95,13 @@ This directory contains the complete formal specification for **FBQLdt** (Lithog
   - `PromptScores` - PROMPT framework scores with computed overall
 
 - **Proof obligations:** Compile-time verification
-  - `WITH_PROOF { score_valid: by formdb_prompt }`
+  - `WITH_PROOF { score_valid: by lithoglyph_prompt }`
   - Automatic proof search (omega, simp, decide)
   - Manual proofs for complex cases
 
 ### DDL Extensions
 
-```fql
+```gql
 -- Type-safe collection with normal form guarantee
 CREATE COLLECTION evidence (
   id : UUID PRIMARY KEY,
@@ -112,7 +112,7 @@ CREATE COLLECTION evidence (
 
 ### DML with Proofs
 
-```fql
+```gql
 -- Insert with automatic proof generation
 INSERT INTO evidence (title, prompt_scores)
 VALUES ('ONS CPI Data', {
@@ -126,14 +126,14 @@ VALUES ('ONS CPI Data', {
 })
 RATIONALE "Official UK government statistics"
 WITH_PROOF {
-  scores_in_bounds: by formdb_prompt,
-  provenance_tracked: by formdb_prov
+  scores_in_bounds: by lithoglyph_prompt,
+  provenance_tracked: by lithoglyph_prov
 };
 ```
 
 ### Queries with Refinements
 
-```fql
+```gql
 -- Query with type-level guarantee
 SELECT (e : Evidence | e.prompt_overall > 90)
 FROM evidence e
@@ -144,7 +144,7 @@ RETURNING (List (Evidence | prompt_overall > 90));
 
 ### Normalization
 
-```fql
+```gql
 -- Discover functional dependencies
 DISCOVER DEPENDENCIES FROM employees
 SAMPLE 10000 CONFIDENCE 0.95;
@@ -242,9 +242,9 @@ Quantified ::= ∀ (x : α), P x | ∃ (x : α), P x
 
 ```lean
 -- Lithoglyph-specific tactics
-formdb_bounds   -- Auto-solve bounded value proofs
-formdb_prov     -- Auto-solve provenance proofs
-formdb_prompt   -- Auto-solve PROMPT score proofs
+lithoglyph_bounds   -- Auto-solve bounded value proofs
+lithoglyph_prov     -- Auto-solve provenance proofs
+lithoglyph_prompt   -- Auto-solve PROMPT score proofs
 fd_tactic       -- Functional dependency reasoning
 nf_tactic       -- Normal form proofs
 lossless_tactic -- Lossless transformation proofs
@@ -262,8 +262,8 @@ lossless_tactic -- Lossless transformation proofs
 
 ### Adding New Syntax
 
-1. Update EBNF grammar (`FBQLdt-Grammar.ebnf`)
-2. Update railroad diagrams (`FBQLdt-Railroad-Diagrams.md`)
+1. Update EBNF grammar (`GQL-DT-Grammar.ebnf`)
+2. Update railroad diagrams (`GQL-DT-Railroad-Diagrams.md`)
 3. Update lexical spec if new keywords/operators
 4. Add to main spec with examples
 5. Implement in parser (once M6 starts)
@@ -306,7 +306,7 @@ All specification documents are licensed under **PMPL-1.0-or-later** (Palimpsest
 
 ## Contact
 
-- **Project:** Lithoglyph Query Language with Dependent Types (FBQLdt)
+- **Project:** Lithoglyph Query Language with Dependent Types (GQL-DT)
 - **Repository:** https://github.com/hyperpolymath/gql-dt
 - **Organization:** hyperpolymath
 - **Author:** Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>

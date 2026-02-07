@@ -1,5 +1,5 @@
 ;; SPDX-License-Identifier: PMPL-1.0-or-later
-;; PLAYBOOK.scm - Operational runbook for formdb
+;; PLAYBOOK.scm - Operational runbook for lithoglyph
 
 (define playbook
   `((version . "1.0.0")

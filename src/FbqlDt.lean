@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: PMPL-1.0-or-later
 -- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (@hyperpolymath)
 --
--- FBQLdt - Lithoglyph Query Language with Dependent Types
+-- GQL-DT - Lithoglyph Query Language with Dependent Types
 --
 -- This module provides compile-time verification of database constraints
 -- through dependent types, enabling:
@@ -10,7 +10,7 @@
 -- - Provenance tracking (Tracked) with type-level guarantees
 -- - PROMPT score verification (PromptScores) with auto-computation
 -- - Type-safe query construction (AST, TypeSafe)
--- - Two-tier architecture (FBQLdt + FBQL)
+-- - Two-tier architecture (GQL-DT + GQL)
 -- - Native IR execution (preserves dependent types)
 
 -- ============================================================================
